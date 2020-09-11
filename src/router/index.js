@@ -46,7 +46,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/example'
+    redirect: '/system'
     // children: [{
     //   path: 'dashboard',
     //   name: 'Dashboard',
@@ -54,7 +54,33 @@ export const constantRoutes = [
     //   meta: { title: 'Dashboard', icon: 'dashboard' }
     // }]
   },
-
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/account',
+    name: 'System',
+    meta: { title: '管理员管理', icon: 'tree' },
+    children: [
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@/views/system/account/index'),
+        meta: { title: '账号管理', icon: 'table' }
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/system/role/index'),
+        meta: { title: '角色管理', icon: 'table' }
+      },
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/system/menu/index'),
+        meta: { title: '菜单管理', icon: 'table' }
+      }
+    ]
+  },
   {
     path: '/example',
     component: Layout,
@@ -210,33 +236,6 @@ export const constantRoutes = [
         name: 'Tree',
         component: () => import('@/views/tree/index'),
         meta: { title: '优惠管理', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/example4',
-    component: Layout,
-    redirect: '/example4/table1',
-    name: 'Example',
-    meta: { title: '管理员管理', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '账号管理', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '角色管理', icon: 'tree' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '菜单管理', icon: 'tree' }
       }
     ]
   },

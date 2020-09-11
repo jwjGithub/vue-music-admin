@@ -3,6 +3,7 @@
 @import './transition.scss';
 @import './element-ui.scss';
 @import './sidebar.scss';
+@import './common.scss';
 
 body {
   height: 100%;
@@ -62,4 +63,18 @@ div:focus {
 // main-container global css
 .app-container {
   padding: 20px;
+}
+
+// 头部查询布局
+.query-item{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  border-bottom: 1px solid #EEE;
+  .left-query{
+    flex:1;
+  }
+  .right-btn{
+    width:90px;
+  }
 }
