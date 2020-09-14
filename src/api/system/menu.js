@@ -24,18 +24,3 @@ export function saveEdit(data) {
     data: data
   })
 }
-// 获取角色下拉框
-export function getSelectList(data) {
-  return request({
-    url: '/sys/managerole/getSelectList',
-    method: 'post',
-    data: data
-  })
-}
-// 获取单个数据信息
-export function getInfoById(id) {
-  return request({
-    url: `sys/user/info/${id}`,
-    method: 'post'
-  })
-}

@@ -1,7 +1,8 @@
 <template>
   <div class="mus-dialog">
+    <!-- v-dialogDrag -->
     <el-dialog
-      v-dialogDrag
+
       :title="title"
       :visible.sync="isShow"
       :width="width"
@@ -93,11 +94,11 @@ export default {
           margin-left:38px;
           font-size: 16px;
           line-height: 16px;
-          color: #ffffff;
+          color: #061032;
         }
         .el-dialog__headerbtn{
           .el-dialog__close{
-            color: #ffffff;
+            color: #061032;
           }
         }
       }

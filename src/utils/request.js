@@ -47,10 +47,10 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(res => {
   const code = res.data.code
-  if (code === 9050 || code === 9104) {
+  if (code === 401 || code === 9104) {
     removeToken() // 删除token
     MessageBox.confirm(
-      (code === 9050 ? '登录状态已过期' : '没有权限访问') + '，您可以继续留在该页面，或者重新登录',
+      (code === 401 ? '登录状态已过期' : '没有权限访问') + '，您可以继续留在该页面，或者重新登录',
       '系统提示',
       {
         confirmButtonText: '重新登录',

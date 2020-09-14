@@ -60,3 +60,18 @@
   display:flex;
   align-items:center;
 }
+
+// 颜色
+// 字体颜色
+.c-blue{
+  color:$blue;
+}
+.c-darkBlue{
+  color:$darkBlue;
+}
+.c-red{
+  color:$red;
+}
+.c-warning{
+  color:#E6A23C;
+}

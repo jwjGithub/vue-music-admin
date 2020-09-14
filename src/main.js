@@ -14,9 +14,19 @@ import store from './store'
 import router from './router'
 
 import '@/permission' // permission control
+
+// 全局方法引入
+import { getToken } from '@/utils/auth'
+import { parseTime, resetForm } from '@/utils/index'
+
 // 全局组件引入
 import Pagination from '@/components/Pagination'
 import MusDialog from '@/components/MusDialog'
+
+// 全局方法挂载
+Vue.prototype.getToken = getToken
+Vue.prototype.parseTime = parseTime
+Vue.prototype.resetForm = resetForm
 
 // 全局组件挂载
 Vue.component('Pagination', Pagination)
