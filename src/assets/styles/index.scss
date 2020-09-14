@@ -64,7 +64,13 @@ div:focus {
 .app-container {
   padding: 20px;
 }
-
+.main-body{
+  min-height: calc(100% - 48px);
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding-bottom: 20px;
+  margin: 24px;
+}
 // 头部查询布局
 .query-item{
   display:flex;

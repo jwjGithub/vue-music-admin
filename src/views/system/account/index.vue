@@ -10,7 +10,7 @@
             <el-form-item label="手机号" prop="mobile">
               <el-input v-model="queryForm.mobile" class="w24"></el-input>
             </el-form-item>
-            <el-form-item label="用户状态" prop="status">
+            <el-form-item label="状态" prop="status">
               <el-select v-model="queryForm.status" clearable placeholder="" class="w24">
                 <el-option value="" label="全部" />
                 <el-option :value="0" label="正常" />
@@ -337,7 +337,7 @@ export default {
         password: '', // 登陆密码
         email: '', // 邮箱
         mobile: '', // 手机
-        status: '0', // 数据状态 0.正常 1 无效 -1删除
+        status: 0, // 数据状态 0.正常 1 无效 -1删除
         sort: '', // 排序
         realname: '', // 用户姓名
         userType: '', // 用户类型 0超级管理员给/1管理员
@@ -528,11 +528,4 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .main-body{
-    min-height: calc(100% - 74px);
-    background-color: #ffffff;
-    border-radius: 6px;
-    padding-bottom: 20px;
-    margin: 24px;
-  }
 </style>
