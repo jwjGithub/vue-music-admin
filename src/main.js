@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
 import '@/assets/styles/index.scss' // global css
-import '@/assets/images/icons' // icon
+import '@/assets/icons' // icon
 
 import App from './App'
 import store from './store'
@@ -17,7 +17,7 @@ import '@/permission' // permission control
 
 // 全局方法引入
 import { getToken } from '@/utils/auth'
-import { parseTime, resetForm } from '@/utils/index'
+import { parseTime, resetForm, handleTree } from '@/utils/index'
 
 // 全局组件引入
 import Pagination from '@/components/Pagination'
@@ -27,6 +27,7 @@ import MusDialog from '@/components/MusDialog'
 Vue.prototype.getToken = getToken
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm
+Vue.prototype.handleTree = handleTree
 
 // 全局组件挂载
 Vue.component('Pagination', Pagination)
@@ -45,7 +46,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, { locale, size: 'medium' })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 

@@ -1,10 +1,19 @@
 import request from '@/utils/request'
 
+// 登录
 export function login(data) {
   return request({
     url: '/sys/login',
     method: 'post',
     data
+  })
+}
+
+// 获取路由数据
+export function getRouterList() {
+  return request({
+    url: '/sys/managemenu/getMenuTree',
+    method: 'POST'
   })
 }
 
