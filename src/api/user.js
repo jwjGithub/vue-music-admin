@@ -12,7 +12,7 @@ export function login(data) {
 // 获取路由数据
 export function getRouterList() {
   return request({
-    url: '/sys/managemenu/getMenuTree',
+    url: '/sys/managemenu/getMenuRoute',
     method: 'POST'
   })
 }
@@ -25,9 +25,10 @@ export function getInfo(token) {
   })
 }
 
+// 登出
 export function logout() {
   return request({
-    url: '/vue-admin-template/user/logout',
+    url: '/sys/logout',
     method: 'post'
   })
 }

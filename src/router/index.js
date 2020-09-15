@@ -54,33 +54,33 @@ export const constantRoutes = [
     //   meta: { title: 'Dashboard', icon: 'dashboard' }
     // }]
   },
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system/account',
-    name: 'System',
-    meta: { title: '管理员管理', icon: 'tree' },
-    children: [
-      {
-        path: 'account',
-        name: 'Account',
-        component: () => import('@/views/system/account/index'),
-        meta: { title: '账号管理', icon: 'table' }
-      },
-      {
-        path: 'role',
-        name: 'Role',
-        component: () => import('@/views/system/role/index'),
-        meta: { title: '角色管理', icon: 'table' }
-      },
-      {
-        path: 'menu',
-        name: 'Menu',
-        component: () => import('@/views/system/menu/index'),
-        meta: { title: '菜单管理', icon: 'table' }
-      }
-    ]
-  },
+  // {
+  //   path: '/system',
+  //   component: Layout,
+  //   redirect: '/system/account',
+  //   name: 'System',
+  //   meta: { title: '管理员管理', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'account',
+  //       name: 'Account',
+  //       component: () => import('@/views/system/account/index'),
+  //       meta: { title: '账号管理', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'role',
+  //       name: 'Role',
+  //       component: () => import('@/views/system/role/index'),
+  //       meta: { title: '角色管理', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'menu',
+  //       name: 'Menu',
+  //       component: () => import('@/views/system/menu/index'),
+  //       meta: { title: '菜单管理', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example',
     component: Layout,
@@ -268,10 +268,10 @@ export const constantRoutes = [
         meta: { title: '问题反馈', icon: 'table' }
       }
     ]
-  },
+  }
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  // { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({

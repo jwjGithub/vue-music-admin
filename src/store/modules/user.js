@@ -63,8 +63,8 @@ const actions = {
     })
   },
 
-  // user logout
-  logout({ commit, state }) {
+  // 退出登录
+  LogOut({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first

@@ -19,7 +19,7 @@ export function saveAdd(data) {
 // 编辑
 export function saveEdit(data) {
   return request({
-    url: '/sys/managemenu/addManageMenu',
+    url: '/sys/managemenu/updateManageMenu',
     method: 'post',
     data: data
   })
