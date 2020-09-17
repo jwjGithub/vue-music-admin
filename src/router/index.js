@@ -82,29 +82,23 @@ export const constantRoutes = [
   //   ]
   // },
   {
-    path: '/example',
+    path: '/company',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '公司管理', icon: 'el-icon-s-help' },
+    redirect: '/company/register',
+    name: 'Company',
+    meta: { title: '公司管理', icon: 'tree' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
+        path: 'register',
+        name: 'Register',
+        component: () => import('@/views/company/register/index'),
         meta: { title: '公司注册审核', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '封存', icon: 'tree' }
-      },
-      {
-        path: 'tree1',
-        name: 'Tree1',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '白名单', icon: 'tree' }
+        path: 'state',
+        name: 'State',
+        component: () => import('@/views/company/state/index'),
+        meta: { title: '公司状态', icon: 'table' }
       }
     ]
   },
