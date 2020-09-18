@@ -27,7 +27,7 @@ export function getEmailSendCode(data) {
 // 注册保存
 export function saveAdd(data) {
   return request({
-    url: '/company/signup/do_com_signup_request',
+    url: '/company/signup/do_company_application_for_registration',
     method: 'post',
     data: data
   })

@@ -55,6 +55,10 @@
       </el-row>
       <el-row class="pb10">
         <el-col :span="24">
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="待审核" name="dsh"></el-tab-pane>
+            <el-tab-pane label="已审核" name="ysh"></el-tab-pane>
+          </el-tabs>
           <el-table
             v-loading="loading"
             :data="dataList"
@@ -72,9 +76,19 @@
                 {{ scope.row.sysUserEntity && scope.row.sysUserEntity.createTime }}
               </template>
             </el-table-column>
+            <el-table-column v-if="activeName == 'ysh'" prop="status" min-width="80" label="状态">
+              <template slot-scope="scope">
+                <template v-if="scope.row.sysUserEntity">
+                  <span v-if="scope.row.sysUserEntity.status == 0" class="c-darkBlue">正常</span>
+                  <span v-if="scope.row.sysUserEntity.status == 1" class="c-red">作废</span>
+                  <span v-if="scope.row.sysUserEntity.status == 2" class="c-darkBlue">审核中</span>
+                  <span v-if="scope.row.sysUserEntity.status == 3" class="c-red">退回</span>
+                </template>
+              </template>
+            </el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="openEdit(scope.row)">修改</el-button>
+                <el-button size="mini" type="text" @click="openDetails(scope.row)">详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -95,18 +109,64 @@
       :is-show="dialogOption.show"
       :is-show-ok="false"
       :is-show-close="false"
-      :width="'600px'"
+      :width="'800px'"
       @handleClose="dialogOption.show = false"
     >
       <div class="pl24 pr24 pt24 pb24">
-        <el-steps :active="addActive" align-center>
+        <!-- <el-steps :active="addActive" align-center>
           <el-step title="第一步" description="验证手机"></el-step>
           <el-step title="第二步" description="验证邮箱"></el-step>
           <el-step title="第三步" description="填写个人信息"></el-step>
           <el-step title="第四步" description="填写公司信息"></el-step>
-        </el-steps>
-        <el-form ref="form" :model="form" :rules="rules" label-width="160px" :inline="true" class="mt20">
-          <el-form-item v-if="addActive == 0" label="用户姓名：" prop="username">
+        </el-steps> -->
+        <el-form ref="form" :model="form" :rules="rules" label-width="100px" :inline="true">
+          <el-form-item class="mb1" label="用户名：" prop="username">
+            <div class="w24">{{ form.username }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="邮箱：" prop="email">
+            <div class="w24">{{ form.email }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="手机号：" prop="mobile">
+            <div class="w24">{{ form.mobile }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="用户姓名：" prop="realname">
+            <div class="w24">{{ form.realname }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="性别：" prop="gender">
+            <div class="w24">{{ form.gender == 'male' ? '男' : (form.gender == 'female' ? '女' : '未知') }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="公司名：" prop="companyName">
+            <div class="w24">{{ form.companyName }}</div>
+          </el-form-item>
+          <el-form-item class="mb10" label="地址：" prop="address">
+            <div class="w24">{{ form.address }}</div>
+          </el-form-item>
+          <el-form-item class="mb10" label="公司介绍：" prop="introduction">
+            <div class="w24">{{ form.introduction }}</div>
+          </el-form-item>
+          <el-form-item class="mb10" label="状态：" prop="status">
+            <div class="w24">
+              <span v-if="form.status == 0" class="c-darkBlue">正常</span>
+              <span v-if="form.status == 1" class="c-red">作废</span>
+              <span v-if="form.status == 2" class="c-darkBlue">审核中</span>
+              <span v-if="form.status == 3" class="c-red">退回</span>
+            </div>
+          </el-form-item>
+          <el-row v-if="form.status == 2">
+            <el-col :span="24">
+              <el-form-item label="备注：" prop="auditRemarks">
+                <el-input v-model="form.auditRemarks" style="width:600px;" type="textarea" :rows="4" :resize="'none'"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label=" ">
+                <el-button type="primary" class="w14 mt24 mr24" @click="handleConfirm(1)">通过</el-button>
+                <el-button type="danger" class="w14 mt24 mr24" @click="handleConfirm(2)">作废</el-button>
+                <el-button type="warning" class="w14 mt24" @click="handleConfirm(3)">驳回</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <!-- <el-form-item v-if="addActive == 0" label="用户姓名：" prop="username">
             <el-input v-model="form.username" class="w24"></el-input>
           </el-form-item>
           <el-form-item v-if="addActive == 0" label="手机号：" prop="mobile">
@@ -137,7 +197,7 @@
           </el-form-item>
           <el-form-item label=" ">
             <el-button type="primary" class="w24 mt24" @click="handleConfirm">下一步</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </div>
     </mus-dialog>
@@ -145,19 +205,16 @@
 </template>
 <script>
 import {
-  saveAdd,
-  saveEdit,
-  getSelectList,
-  getInfoById
-} from '@/api/system/account'
-import {
   getDataList,
+  saveAdd,
   getPhoneSendCode
 } from '@/api/company/register'
+// 申请人姓名/公司姓名/申请时间/审核状态/操作
 export default {
   name: 'Register',
   data() {
     return {
+      activeName: 'dsh',
       addActive: 0, // 添加步骤
       phoneSendCodeType: false, // 获取手机验证码状态 false 可以获取 true 不可获取
       phoneSendCodeCount: '获取验证码',
@@ -182,9 +239,9 @@ export default {
       timeList: [],
       loading: false,
       dataList: [],
-      roleList: [], // 角色列表
       queryForm: {
-        status: '', // 审核状态，0正常，1作废，2审核中，3退回，多种状态传 1,2
+        token: '3d3c7d97b7bc3d0a567d7d478e7baa15',
+        status: '2', // 审核状态，0正常，1作废，2审核中，3退回，多种状态传 1,2
         page: 1, // 当前页
         limit: 10 // 每页条数
       },
@@ -202,36 +259,45 @@ export default {
         file: '' // 公司附件
       },
       rules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
-        mobile: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
-        phoneCode: [
-          { required: true, message: '请输入手机验证码', trigger: 'blur' }
-        ],
-        userType: [
-          { required: true, message: '请选择用户类型', trigger: ['blur', 'change'] }
-        ],
-        status: [
-          { required: true, message: '请选择用户状态', trigger: ['blur', 'change'] }
-        ],
-        gender: [
-          { required: true, message: '请选择性别', trigger: ['blur', 'change'] }
-        ],
-        userManageroleId: [
-          { required: true, message: '请选择角色', trigger: ['blur', 'change'] }
-        ]
+        // username: [
+        //   { required: true, message: '请输入用户名', trigger: 'blur' }
+        // ],
+        // mobile: [
+        //   { required: true, message: '请输入手机号', trigger: 'blur' }
+        // ],
+        // phoneCode: [
+        //   { required: true, message: '请输入手机验证码', trigger: 'blur' }
+        // ],
+        // userType: [
+        //   { required: true, message: '请选择用户类型', trigger: ['blur', 'change'] }
+        // ],
+        // status: [
+        //   { required: true, message: '请选择用户状态', trigger: ['blur', 'change'] }
+        // ],
+        // gender: [
+        //   { required: true, message: '请选择性别', trigger: ['blur', 'change'] }
+        // ],
+        // userManageroleId: [
+        //   { required: true, message: '请选择角色', trigger: ['blur', 'change'] }
+        // ]
       }
 
     }
   },
   created() {
-    this.getSelectList()
     this.getDataList()
   },
   methods: {
+    handleClick(tab, event) {
+      if (this.activeName === 'dsh') {
+        this.queryForm.status = '2'
+      }
+      if (this.activeName === 'ysh') {
+        this.queryForm.status = '0,3'
+      }
+      this.getDataList()
+      console.log(this.activeName, '-activeName')
+    },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.selectOption.ids = selection.map(item => item.userId)
@@ -245,12 +311,6 @@ export default {
         this.dataList = res.data || []
         this.total = res.count || 0
         this.loading = false
-      })
-    },
-    // 查询角色列表
-    getSelectList() {
-      getSelectList().then(res => {
-        this.roleList = res.data || []
       })
     },
     // 打开新增窗口
@@ -273,56 +333,73 @@ export default {
       }
       this.resetForm('form')
     },
-    // 打开编辑窗口
-    openEdit(row) {
+    // 打开详情接口
+    openDetails(row) {
       this.dialogOption = {
-        title: '编辑账号',
+        title: '详情',
         show: true,
         loading: false
       }
-      this.form = JSON.parse(JSON.stringify(row))
+      let json = row.sysUserEntity || {}
+      this.form = {
+        status: json.status,
+        userId: json.userId,
+        username: json.username, // 用户名
+        email: json.email, // 邮箱
+        mobile: json.mobile, // 手机号
+        realname: json.realname, // 真名
+        gender: json.gender, //  性别 male 男 female 女 unknown 未知
+        companyName: row.companyName, // 公司名
+        address: row.address, // 地址
+        introduction: row.introduction, // 公司介绍
+        auditRemarks: row.auditRemarks // 备注
+      }
+      console.log(row, this.form)
       this.resetForm('form')
     },
-    // 保存回调
-    handleConfirm() {
-      this.$refs['form'].validate((valid) => {
-        if (valid) {
-          // if (this.form.userId) {
-          //   this.saveEdit()
-          // } else {
-          //   this.saveAdd()
-          // }
-        } else {
-          return false
-        }
-      })
-    },
-    // 新增保存
-    saveAdd() {
-      this.dialogOption.loading = true
-      saveAdd(this.form).then(res => {
-        this.$notify.success({
-          title: '保存成功'
+    // 保存回调 1通过 2作废 3驳回
+    handleConfirm(type) {
+      let json = {
+        status: 0,
+        user_id: this.form.userId,
+        mobile: this.form.mobile,
+        auditRemarks: this.form.auditRemarks
+      }
+      let title = ''
+      let message = ''
+      if (type === 1) {
+        json.status = 0
+        title = '申请通过'
+        message = '此操作将通过当前申请, 是否继续?'
+      }
+      if (type === 2) {
+        json.status = 1
+        title = '申请作废'
+        message = '此操作将作废当前申请, 是否继续?'
+      }
+      if (type === 3) {
+        json.status = 3
+        title = '申请驳回'
+        message = '此操作将驳回当前申请, 是否继续?'
+      }
+      this.$confirm(message, title, {
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+        type: 'warning'
+      }).then(() => {
+        this.dialogOption.loading = true
+        saveAdd(json).then(res => {
+          this.$notify.success({
+            title: '操作成功'
+          })
+          this.getDataList()
+          this.dialogOption.show = false
+          this.dialogOption.loading = false
+        }).catch(() => {
+          this.dialogOption.loading = false
         })
-        this.getDataList()
-        this.dialogOption.show = false
-        this.dialogOption.loading = false
-      }).catch(e => {
-        this.dialogOption.loading = false
-      })
-    },
-    // 编辑保存
-    saveEdit() {
-      this.dialogOption.loading = true
-      saveEdit(this.form).then(res => {
-        this.$notify.success({
-          title: '保存成功'
-        })
-        this.getDataList()
-        this.dialogOption.show = false
-        this.dialogOption.loading = false
-      }).catch(e => {
-        this.dialogOption.loading = false
+      }).catch(() => {
+
       })
     },
     // 获取手机验证码
