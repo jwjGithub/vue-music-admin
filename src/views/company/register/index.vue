@@ -240,7 +240,6 @@ export default {
       loading: false,
       dataList: [],
       queryForm: {
-        token: '3d3c7d97b7bc3d0a567d7d478e7baa15',
         status: '2', // 审核状态，0正常，1作废，2审核中，3退回，多种状态传 1,2
         page: 1, // 当前页
         limit: 10 // 每页条数
