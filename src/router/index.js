@@ -81,27 +81,27 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/company',
-    component: Layout,
-    redirect: '/company/register',
-    name: 'Company',
-    meta: { title: '公司管理', icon: 'tree' },
-    children: [
-      {
-        path: 'register',
-        name: 'Register',
-        component: () => import('@/views/company/register/index'),
-        meta: { title: '公司注册审核', icon: 'table' }
-      },
-      {
-        path: 'state',
-        name: 'State',
-        component: () => import('@/views/company/state/index'),
-        meta: { title: '公司状态', icon: 'table' }
-      }
-    ]
-  },
+  // {
+  //   path: '/company',
+  //   component: Layout,
+  //   redirect: '/company/review',
+  //   name: 'Company',
+  //   meta: { title: '公司管理', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'review',
+  //       name: 'Review',
+  //       component: () => import('@/views/company/review/index'),
+  //       meta: { title: '公司注册审核', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'state',
+  //       name: 'State',
+  //       component: () => import('@/views/company/state/index'),
+  //       meta: { title: '公司状态', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example1',
     component: Layout,

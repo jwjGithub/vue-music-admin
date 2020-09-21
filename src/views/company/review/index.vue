@@ -1,41 +1,11 @@
 <template>
   <div class="main-body">
     <div class="main-content">
-      <!-- <el-form ref="queryForm" label-width="100px" :model="queryForm" :inline="true">
+      <el-form ref="queryForm" label-width="100px" :model="queryForm" :inline="true">
         <div class="query-item">
           <div class="left-query">
-            <el-form-item label="用户名称" prop="username">
-              <el-input v-model="queryForm.username" class="w24"></el-input>
-            </el-form-item>
-            <el-form-item label="手机号" prop="mobile">
-              <el-input v-model="queryForm.mobile" class="w24"></el-input>
-            </el-form-item>
-            <el-form-item label="状态" prop="status">
-              <el-select v-model="queryForm.status" clearable placeholder="" class="w24">
-                <el-option value="" label="全部" />
-                <el-option :value="0" label="正常" />
-                <el-option :value="1" label="停用" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="开始时间" prop="starttime">
-              <el-date-picker
-                v-model="queryForm.starttime"
-                class="w24"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-              >
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item label="结束时间" prop="endtime">
-              <el-date-picker
-                v-model="queryForm.endtime"
-                class="w24"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-              >
-              </el-date-picker>
+            <el-form-item label="公司名称" prop="com_name">
+              <el-input v-model="queryForm.com_name" class="w24"></el-input>
             </el-form-item>
           </div>
           <div class="right-btn">
@@ -47,12 +17,7 @@
             </el-form-item>
           </div>
         </div>
-      </el-form> -->
-      <el-row class="pt20 pb10">
-        <el-col :span="24">
-          <el-button type="primary" class="mr20 mb10" @click="openAdd">注册</el-button>
-        </el-col>
-      </el-row>
+      </el-form>
       <el-row class="pb10">
         <el-col :span="24">
           <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -70,7 +35,7 @@
                 {{ scope.row.sysUserEntity && scope.row.sysUserEntity.realname }}
               </template>
             </el-table-column>
-            <el-table-column prop="companyName" min-width="150" label="公司姓名"></el-table-column>
+            <el-table-column prop="companyName" min-width="150" label="公司名称"></el-table-column>
             <el-table-column prop="createTime" min-width="150" label="申请时间">
               <template slot-scope="scope">
                 {{ scope.row.sysUserEntity && scope.row.sysUserEntity.createTime }}
@@ -208,10 +173,9 @@ import {
   getDataList,
   saveAdd,
   getPhoneSendCode
-} from '@/api/company/register'
-// 申请人姓名/公司姓名/申请时间/审核状态/操作
+} from '@/api/company/review'
 export default {
-  name: 'Register',
+  name: 'Review',
   data() {
     return {
       activeName: 'dsh',
@@ -240,6 +204,7 @@ export default {
       loading: false,
       dataList: [],
       queryForm: {
+        com_name: '', // 公司名称
         status: '2', // 审核状态，0正常，1作废，2审核中，3退回，多种状态传 1,2
         page: 1, // 当前页
         limit: 10 // 每页条数
@@ -311,26 +276,6 @@ export default {
         this.total = res.count || 0
         this.loading = false
       })
-    },
-    // 打开新增窗口
-    openAdd() {
-      this.dialogOption = {
-        title: '注册',
-        show: true,
-        loading: false
-      }
-      this.form = {
-        username: '', // 用户名
-        email: '', // 邮箱
-        mobile: '', // 手机号
-        realname: '', // 真名
-        gender: '', //  性别 male 男 female 女 unknown 未知
-        companyName: '', // 公司名
-        address: '', // 地址
-        introduction: '', // 公司介绍
-        file: '' // 公司附件
-      }
-      this.resetForm('form')
     },
     // 打开详情接口
     openDetails(row) {
