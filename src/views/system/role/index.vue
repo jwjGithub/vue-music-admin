@@ -17,7 +17,18 @@
                 <el-option :value="1" label="停用" />
               </el-select>
             </el-form-item>
-            <el-form-item label="开始时间" prop="starttime">
+            <el-form-item label="创建时间" prop="status">
+              <el-date-picker
+                v-model="timeList"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+            <!-- <el-form-item label="开始时间" prop="starttime">
               <el-date-picker
                 v-model="queryForm.starttime"
                 class="w24"
@@ -36,7 +47,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               >
               </el-date-picker>
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <div class="right-btn">
             <el-form-item>
@@ -273,6 +284,8 @@ export default {
     // 查询列表
     getDataList() {
       this.loading = true
+      this.queryForm.starttime = this.timeList && this.timeList[0]
+      this.queryForm.endtime = this.timeList && this.timeList[1]
       getDataList(this.queryForm).then(res => {
         this.dataList = res.data || []
         this.total = res.count || 0
