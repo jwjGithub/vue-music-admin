@@ -102,6 +102,24 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
+  // {
+  //   path: '/resourceMonitoring',
+  //   component: Layout,
+  //   name: 'ResourceMonitoring',
+  //   meta: { title: '资源监控', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'http://47.94.21.246:8082/musicmanage/druid/login.html',
+  //       name: 'druidJK',
+  //       meta: { title: 'druid监控', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'http://47.94.21.246:8082/musicmanage/monitoring',
+  //       name: 'YYJK',
+  //       meta: { title: '应用监控', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example1',
     component: Layout,
@@ -230,21 +248,6 @@ export const constantRoutes = [
         name: 'Tree',
         component: () => import('@/views/tree/index'),
         meta: { title: '优惠管理', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/example5',
-    component: Layout,
-    redirect: '/example5/table1',
-    name: 'Example',
-    meta: { title: '资源监控', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '资源监控', icon: 'table' }
       }
     ]
   },
