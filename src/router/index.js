@@ -121,6 +121,21 @@ export const constantRoutes = [
   //   ]
   // },
   {
+    path: '/feedback',
+    component: Layout,
+    redirect: '/feedback',
+    name: '',
+    meta: { title: '意见反馈', icon: 'tree' },
+    children: [
+      {
+        path: '',
+        name: 'Feedback',
+        component: () => import('@/views/feedback/index'),
+        meta: { title: '意见反馈', icon: 'table' }
+      }
+    ]
+  },
+  {
     path: '/example1',
     component: Layout,
     redirect: '/example1/table1',
