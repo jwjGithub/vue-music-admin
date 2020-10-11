@@ -120,21 +120,21 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/feedback',
-    component: Layout,
-    redirect: '/feedback',
-    name: '',
-    meta: { title: '意见反馈', icon: 'tree' },
-    children: [
-      {
-        path: '',
-        name: 'Feedback',
-        component: () => import('@/views/feedback/index'),
-        meta: { title: '意见反馈', icon: 'table' }
-      }
-    ]
-  },
+  // {
+  //   path: '/feedback',
+  //   component: Layout,
+  //   redirect: '/feedback/index',
+  //   name: '',
+  //   meta: { title: '意见反馈', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Feedback',
+  //       component: () => import('@/views/feedback/index'),
+  //       meta: { title: '意见反馈', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example1',
     component: Layout,

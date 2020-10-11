@@ -7,12 +7,26 @@
             <el-form-item label="标题" prop="title">
               <el-input v-model="queryForm.title" class="w24"></el-input>
             </el-form-item>
-            <el-form-item label="状态" prop="status">
-              <el-select v-model="queryForm.status" clearable placeholder="" class="w24">
+            <el-form-item label="问题类型" prop="type">
+              <el-select v-model="queryForm.type" clearable placeholder="" class="w24">
                 <el-option value="" label="全部" />
-                <el-option :value="0" label="未回复" />
-                <el-option :value="1" label="已回复" />
+                <el-option :value="0" label="问题反馈" />
+                <el-option :value="1" label="举报投诉" />
+                <el-option :value="2" label="优化建议" />
               </el-select>
+            </el-form-item>
+            <el-form-item label="提交人" prop="proposer">
+              <el-input v-model="queryForm.proposer" class="w24"></el-input>
+            </el-form-item>
+            <el-form-item label="提交时间" prop="createdTime">
+              <el-date-picker
+                v-model="form.createdTime"
+                class="w24"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期"
+              >
+              </el-date-picker>
             </el-form-item>
           </div>
           <div class="right-btn">
@@ -36,15 +50,22 @@
             <el-table-column prop="title" min-width="150" label="标题"></el-table-column>
             <el-table-column prop="status" min-width="150" label="状态">
               <template slot-scope="scope">
-                <span>{{ scope.row.status === 0 ? '未回复' : '已回复' }}</span>
-              </template></el-table-column>
+                <span v-if="scope.row.status === 0" class="c-red">未回复</span>
+                <span v-if="scope.row.status === 1" class="c-blue">未回复</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="type" min-width="150" label="类型">
+              <!-- <template slot-scope="scope">
+                <span v-if="scope.row.status === 0" class="c-red">未回复</span>
+                <span v-if="scope.row.status === 1" class="c-blue">未回复</span>
+              </template> -->
+            </el-table-column>
             <el-table-column prop="proposer" min-width="150" label="提交人"></el-table-column>
-            <el-table-column prop="mobile" min-width="150" label="提交人号码"></el-table-column>
+            <el-table-column prop="email" min-width="150" label="邮箱"></el-table-column>
             <el-table-column prop="createdTime" min-width="180" label="提交时间"></el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="openDetails(scope.row)">回复</el-button>
-                <el-button size="mini" type="text" @click="openDetails(scope.row)">作废</el-button>
+                <el-button size="mini" type="text" @click="openDetails(scope.row)">详情</el-button>
                 <el-button size="mini" type="text" class="c-red" @click="openDelete(scope.row)">删除</el-button>
               </template>
             </el-table-column>
@@ -60,7 +81,7 @@
       />
     </div>
     <!-- 新增/修改 弹窗 -->
-    <!-- <mus-dialog
+    <mus-dialog
       :title="dialogOption.title"
       :loading="dialogOption.loading"
       :is-show="dialogOption.show"
@@ -71,61 +92,52 @@
     >
       <div class="pl24 pr24 pt24 pb24">
         <el-form ref="form" :model="form" :rules="rules" label-width="100px" :inline="true">
-          <el-form-item class="mb1" label="用户名：" prop="username">
-            <div class="w24">{{ form.username }}</div>
+          <el-form-item class="mb1" label="标题：" prop="title">
+            <div class="w24">{{ form.title }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="类型：" prop="type">
+            <div class="w24">{{ form.type }}</div>
+          </el-form-item>
+          <el-form-item class="mb1" label="提交人：" prop="proposer">
+            <div class="w24">{{ form.proposer }}</div>
           </el-form-item>
           <el-form-item class="mb1" label="邮箱：" prop="email">
             <div class="w24">{{ form.email }}</div>
           </el-form-item>
-          <el-form-item class="mb1" label="手机号：" prop="mobile">
-            <div class="w24">{{ form.mobile }}</div>
-          </el-form-item>
-          <el-form-item class="mb1" label="用户姓名：" prop="realname">
-            <div class="w24">{{ form.realname }}</div>
-          </el-form-item>
-          <el-form-item class="mb1" label="性别：" prop="gender">
-            <div class="w24">{{ form.gender == 'male' ? '男' : (form.gender == 'female' ? '女' : '未知') }}</div>
-          </el-form-item>
-          <el-form-item class="mb1" label="公司名：" prop="companyName">
-            <div class="w24">{{ form.companyName }}</div>
-          </el-form-item>
-          <el-form-item class="mb10" label="地址：" prop="address">
-            <div class="w24">{{ form.address }}</div>
-          </el-form-item>
-          <el-form-item class="mb10" label="公司介绍：" prop="introduction">
-            <div class="w24">{{ form.introduction }}</div>
-          </el-form-item>
-          <el-form-item class="mb10" label="状态：" prop="status">
+          <el-form-item class="mb1" label="状态：" prop="status">
             <div class="w24">
-              <span v-if="form.status == 0" class="c-darkBlue">正常</span>
-              <span v-if="form.status == 1" class="c-red">作废</span>
-              <span v-if="form.status == 2" class="c-darkBlue">审核中</span>
-              <span v-if="form.status == 3" class="c-red">退回</span>
+              <span v-if="form.status == 1" class="c-blue">已回复</span>
+              <span v-else class="c-red">未回复</span>
             </div>
-          </el-form-item> -->
-    <!-- <el-row v-if="form.status == 2">
+          </el-form-item>
+          <el-form-item class="mb1" label="提交内容：" prop="tiJiaoContent">
+            <div class="w24">{{ form.tiJiaoContent }}</div>
+          </el-form-item>
+          <el-row>
             <el-col :span="24">
-              <el-form-item label="备注：" prop="auditRemarks">
-                <el-input v-model="form.auditRemarks" style="width:600px;" type="textarea" :rows="4" :resize="'none'"></el-input>
+              <el-form-item label="回复内容：" prop="content">
+                <el-input v-if="form.status == 0" v-model="form.content" style="width:600px;" type="textarea" :rows="4" :resize="'none'"></el-input>
+                <div v-else style="width:600px;">{{ form.content }}</div>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label=" ">
-                <el-button type="primary" class="w14 mt24 mr24" @click="handleConfirm(1)">通过</el-button>
-                <el-button type="danger" class="w14 mt24 mr24" @click="handleConfirm(2)">作废</el-button>
-                <el-button type="warning" class="w14 mt24" @click="handleConfirm(3)">驳回</el-button>
+                <el-button class="w14 mt24" @click="dialogOption.show = false">关闭</el-button>
+                <el-button v-if="form.status == 0" v-loading="dialogOption.loading" type="primary" class="w14 mt24" @click="handleConfirm">回复</el-button>
               </el-form-item>
             </el-col>
-          </el-row> -->
-    <!-- </el-form>
+          </el-row>
+        </el-form>
       </div>
-    </mus-dialog> -->
+    </mus-dialog>
   </div>
 </template>
 <script>
 import {
   getDataList,
-  saveDelete
+  saveDelete,
+  queryReply,
+  addReply
 } from '@/api/feedback'
 export default {
   name: 'Review',
@@ -141,31 +153,25 @@ export default {
       loading: false,
       dataList: [],
       queryForm: {
-        title: '', // 问题标题
-        status: '', // 状态，0未回复，1已回复
+        // title: '', // 问题标题
+        // type: '', // 问题类型
+        // proposer: '', // 提交人
+        // createdTime: '', // 提交时间
         page: 1, // 当前页
         limit: 10 // 每页条数
       },
       form: {
-        phoneCode: '', // 手机验证码
-        emailCode: '', // 邮箱验证码
-        username: '', // 用户名
-        email: '', // 邮箱
-        mobile: '', // 手机号
-        realname: '', // 真名
-        gender: '', //  性别 male 男 female 女 unknown 未知
-        companyName: '', // 公司名
-        address: '', // 地址
-        introduction: '', // 公司介绍
-        file: '' // 公司附件
+        title: '', // 问题标题
+        type: '', // 问题类型
+        proposer: '', // 提交人
+        createdTime: '', // 提交时间
+        fdId: '', // 问题id
+        content: '' // 回复内容
       },
       rules: {
-        // username: [
-        //   { required: true, message: '请输入用户名', trigger: 'blur' }
-        // ],
-        // userManageroleId: [
-        //   { required: true, message: '请选择角色', trigger: ['blur', 'change'] }
-        // ]
+        content: [
+          { required: true, message: '请输入回复内容', trigger: 'blur' }
+        ]
       }
 
     }
@@ -190,23 +196,24 @@ export default {
         show: true,
         loading: false
       }
-      let json = row.sysUserEntity || {}
       this.form = {
-        status: json.status,
-        userId: json.userId,
-        username: json.username, // 用户名
-        email: json.email, // 邮箱
-        mobile: json.mobile, // 手机号
-        realname: json.realname, // 真名
-        gender: json.gender, //  性别 male 男 female 女 unknown 未知
-        companyName: row.companyName, // 公司名
-        address: row.address, // 地址
-        introduction: row.introduction, // 公司介绍
-        auditRemarks: row.auditRemarks // 备注
+        title: row.title, // 问题标题
+        type: row.type, // 问题类型
+        proposer: row.proposer, // 提交人
+        createdTime: row.createdTime, // 提交时间
+        email: row.email, // 邮箱
+        tiJiaoContent: row.content, // 提交内容
+        status: row.status, // 提交状态
+        fdId: row.id, // 问题id
+        content: '' // 回复内容
+      }
+      if (row.status !== 0) {
+        this.queryReply(row.id)
       }
       console.log(row, this.form)
       this.resetForm('form')
     },
+    // 打开问题删除
     openDelete(row) {
       this.$confirm('此操作将删除意见反馈, 是否继续?', '反馈删除', {
         cancelButtonText: '取消',
@@ -222,52 +229,37 @@ export default {
       }).catch(() => {
 
       })
+    },
+    // 查询一个问题的回复
+    queryReply(id) {
+      queryReply(id).then(res => {
+        this.form.content = res.data.content
+      })
+    },
+    // 保存回调
+    handleConfirm() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.dialogOption.loading = true
+          let json = {
+            fdId: this.form.fdId,
+            content: this.form.content
+          }
+          addReply(json).then(res => {
+            this.$notify.success({
+              title: '操作成功'
+            })
+            this.getDataList()
+            this.dialogOption.show = false
+            this.dialogOption.loading = false
+          }).catch(() => {
+            this.dialogOption.loading = false
+          })
+        } else {
+          return false
+        }
+      })
     }
-    // 保存回调 1通过 2作废 3驳回
-    // handleConfirm(type) {
-    //   let json = {
-    //     status: 0,
-    //     user_id: this.form.userId,
-    //     mobile: this.form.mobile,
-    //     auditRemarks: this.form.auditRemarks
-    //   }
-    //   let title = ''
-    //   let message = ''
-    //   if (type === 1) {
-    //     json.status = 0
-    //     title = '申请通过'
-    //     message = '此操作将通过当前申请, 是否继续?'
-    //   }
-    //   if (type === 2) {
-    //     json.status = 1
-    //     title = '申请作废'
-    //     message = '此操作将作废当前申请, 是否继续?'
-    //   }
-    //   if (type === 3) {
-    //     json.status = 3
-    //     title = '申请驳回'
-    //     message = '此操作将驳回当前申请, 是否继续?'
-    //   }
-    //   this.$confirm(message, title, {
-    //     cancelButtonText: '取消',
-    //     confirmButtonText: '确定',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     this.dialogOption.loading = true
-    //     saveAdd(json).then(res => {
-    //       this.$notify.success({
-    //         title: '操作成功'
-    //       })
-    //       this.getDataList()
-    //       this.dialogOption.show = false
-    //       this.dialogOption.loading = false
-    //     }).catch(() => {
-    //       this.dialogOption.loading = false
-    //     })
-    //   }).catch(() => {
-
-    //   })
-    // }
   }
 }
 </script>

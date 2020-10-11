@@ -211,7 +211,9 @@ export default {
       treeList: [], // 角色列表
       queryForm: {
         title: '', // 菜单名称
-        status: '' // 状态 NORMAL正常 STOP停用 DELETE删除
+        status: '', // 状态 NORMAL正常 STOP停用 DELETE删除
+        page: 1, // 当前页
+        limit: 999 // 每页条数
       },
       form: {
         isExlink: '', // 是否外链
