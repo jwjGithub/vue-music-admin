@@ -136,6 +136,40 @@ export const constantRoutes = [
   //   ]
   // },
   {
+    path: '/log',
+    component: Layout,
+    redirect: '/log/login',
+    meta: { title: '日志跟踪', icon: 'tree' },
+    children: [
+      {
+        path: 'login',
+        component: () => import('@/views/log/login/index'),
+        meta: { title: '登陆日志', icon: 'tree' },
+        redirect: '/log/login/company',
+        children: [
+          {
+            path: 'company',
+            name: 'LogLoginCompany',
+            component: () => import('@/views/log/login/company/index'),
+            meta: { title: '公司登录日志', icon: 'table' }
+          },
+          {
+            path: 'musician',
+            name: 'LogLoginMusician',
+            component: () => import('@/views/log/login/musician/index'),
+            meta: { title: '音乐人登录日志', icon: 'table' }
+          },
+          {
+            path: 'admin',
+            name: 'LogLoginAdmin',
+            component: () => import('@/views/log/login/admin/index'),
+            meta: { title: '管理员登录日志', icon: 'table' }
+          }
+        ]
+      }
+    ]
+  },
+  {
     path: '/example1',
     component: Layout,
     redirect: '/example1/table1',
