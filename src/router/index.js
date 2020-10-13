@@ -135,40 +135,40 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/log',
-    component: Layout,
-    redirect: '/log/login',
-    meta: { title: '日志跟踪', icon: 'tree' },
-    children: [
-      {
-        path: 'login',
-        component: () => import('@/views/log/login/index'),
-        meta: { title: '登陆日志', icon: 'tree' },
-        redirect: '/log/login/company',
-        children: [
-          {
-            path: 'company',
-            name: 'LogLoginCompany',
-            component: () => import('@/views/log/login/company/index'),
-            meta: { title: '公司登录日志', icon: 'table' }
-          },
-          {
-            path: 'musician',
-            name: 'LogLoginMusician',
-            component: () => import('@/views/log/login/musician/index'),
-            meta: { title: '音乐人登录日志', icon: 'table' }
-          },
-          {
-            path: 'admin',
-            name: 'LogLoginAdmin',
-            component: () => import('@/views/log/login/admin/index'),
-            meta: { title: '管理员登录日志', icon: 'table' }
-          }
-        ]
-      }
-    ]
-  },
+  // {
+  //   path: '/log',
+  //   component: Layout,
+  //   redirect: '/log/login',
+  //   meta: { title: '日志跟踪', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'login',
+  //       component: () => import('@/views/log/login/index'),
+  //       meta: { title: '登陆日志', icon: 'tree' },
+  //       redirect: '/log/login/company',
+  //       children: [
+  //         {
+  //           path: 'company',
+  //           name: 'LogLoginCompany',
+  //           component: () => import('@/views/log/login/company/index'),
+  //           meta: { title: '公司登录日志', icon: 'table' }
+  //         },
+  //         {
+  //           path: 'musician',
+  //           name: 'LogLoginMusician',
+  //           component: () => import('@/views/log/login/musician/index'),
+  //           meta: { title: '音乐人登录日志', icon: 'table' }
+  //         },
+  //         {
+  //           path: 'admin',
+  //           name: 'LogLoginAdmin',
+  //           component: () => import('@/views/log/login/admin/index'),
+  //           meta: { title: '管理员登录日志', icon: 'table' }
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // },
   {
     path: '/example1',
     component: Layout,
@@ -223,62 +223,62 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: '日志跟踪',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: '登录日志' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: '公司登录日志' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-3',
-            meta: { title: '音乐人登录日志' }
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-3',
-            meta: { title: '管理员登录日志' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: '敏感业务日志' }
-      },
-      {
-        path: 'menu3',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: '财务日志' }
-      },
-      {
-        path: 'menu4',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: '系统报错日志' }
-      }
-    ]
-  },
+  // {
+  //   path: '/nested',
+  //   component: Layout,
+  //   redirect: '/nested/menu1',
+  //   name: 'Nested',
+  //   meta: {
+  //     title: '日志跟踪',
+  //     icon: 'nested'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'menu1',
+  //       component: () => import('@/views/nested/menu1/index'), // Parent router-view
+  //       name: 'Menu1',
+  //       meta: { title: '登录日志' },
+  //       children: [
+  //         {
+  //           path: 'menu1-1',
+  //           component: () => import('@/views/nested/menu1/menu1-1'),
+  //           name: 'Menu1-1',
+  //           meta: { title: '公司登录日志' }
+  //         },
+  //         {
+  //           path: 'menu1-2',
+  //           component: () => import('@/views/nested/menu1/menu1-1'),
+  //           name: 'Menu1-3',
+  //           meta: { title: '音乐人登录日志' }
+  //         },
+  //         {
+  //           path: 'menu1-3',
+  //           component: () => import('@/views/nested/menu1/menu1-1'),
+  //           name: 'Menu1-3',
+  //           meta: { title: '管理员登录日志' }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: 'menu2',
+  //       component: () => import('@/views/nested/menu2/index'),
+  //       name: 'Menu2',
+  //       meta: { title: '敏感业务日志' }
+  //     },
+  //     {
+  //       path: 'menu3',
+  //       component: () => import('@/views/nested/menu2/index'),
+  //       name: 'Menu2',
+  //       meta: { title: '财务日志' }
+  //     },
+  //     {
+  //       path: 'menu4',
+  //       component: () => import('@/views/nested/menu2/index'),
+  //       name: 'Menu2',
+  //       meta: { title: '系统报错日志' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example3',
     component: Layout,
@@ -297,21 +297,6 @@ export const constantRoutes = [
         name: 'Tree',
         component: () => import('@/views/tree/index'),
         meta: { title: '优惠管理', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/example6',
-    component: Layout,
-    redirect: '/example6/table1',
-    name: 'Example',
-    meta: { title: '问题反馈', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '问题反馈', icon: 'table' }
       }
     ]
   }
