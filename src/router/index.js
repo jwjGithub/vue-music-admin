@@ -299,8 +299,21 @@ export const constantRoutes = [
         meta: { title: '优惠管理', icon: 'tree' }
       }
     ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    redirect: '/test/index',
+    meta: { title: '接口测试', icon: 'tree' },
+    children: [
+      {
+        path: 'index',
+        name: 'Test',
+        component: () => import('@/views/test'),
+        meta: { title: '接口测试', icon: 'table' }
+      }
+    ]
   }
-
   // 404 page must be placed at the end !!!
   // { path: '*', redirect: '/404', hidden: true }
 ]
