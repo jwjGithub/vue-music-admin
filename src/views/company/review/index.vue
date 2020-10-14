@@ -116,8 +116,19 @@
           </el-form-item>
           <el-row>
             <el-col :span="24">
+              <el-form-item class="mb10" label="公司资质：" prop="url">
+                <el-image
+                  style="width: 100px; height: 100px"
+                  :src="form.url"
+                >
+                </el-image>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
               <el-form-item class="mb10" label="公司介绍：" prop="introduction">
-                <div style="line-height:1;" v-html="form.introduction"></div>
+                <div v-html="form.introduction"></div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -214,6 +225,7 @@ export default {
         limit: 10 // 每页条数
       },
       form: {
+        comId: '', // 公司id
         phoneCode: '', // 手机验证码
         emailCode: '', // 邮箱验证码
         username: '', // 用户名
@@ -224,11 +236,12 @@ export default {
         companyName: '', // 公司名
         address: '', // 地址
         introduction: '', // 公司介绍
-        file: '' // 公司附件
+        file: '', // 公司附件
+        auditRemarks: '' // 备注
       },
       rules: {
-        // username: [
-        //   { required: true, message: '请输入用户名', trigger: 'blur' }
+        // auditRemarks: [
+        //   { required: true, message: '请输入备注', trigger: 'blur' }
         // ],
         // mobile: [
         //   { required: true, message: '请输入手机号', trigger: 'blur' }
@@ -290,6 +303,7 @@ export default {
       }
       let json = row.sysUserEntity || {}
       this.form = {
+        comId: row.id, // 公司id
         status: json.status,
         userId: json.userId,
         username: json.username, // 用户名
@@ -300,7 +314,8 @@ export default {
         companyName: row.companyName, // 公司名
         address: row.address, // 地址
         introduction: row.introduction, // 公司介绍
-        auditRemarks: row.auditRemarks // 备注
+        auditRemarks: row.auditRemarks, // 备注
+        url: row.lisence && row.lisence.url || ''
       }
       console.log(row, this.form)
       this.resetForm('form')
@@ -311,7 +326,8 @@ export default {
         status: 0,
         user_id: this.form.userId,
         mobile: this.form.mobile,
-        auditRemarks: this.form.auditRemarks
+        comId: this.form.comId,
+        auditRemarks: this.form.auditRemarks || ''
       }
       let title = ''
       let message = ''
