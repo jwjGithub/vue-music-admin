@@ -106,9 +106,6 @@
           <el-form-item class="mb10" label="地址：" prop="address">
             <div class="w24">{{ form.address }}</div>
           </el-form-item>
-          <el-form-item class="mb10" label="公司介绍：" prop="introduction">
-            <div class="w24">{{ form.introduction }}</div>
-          </el-form-item>
           <el-form-item class="mb10" label="状态：" prop="status">
             <div class="w24">
               <span v-if="form.status == 0" class="c-darkBlue">正常</span>
@@ -117,6 +114,13 @@
               <span v-if="form.status == 3" class="c-red">退回</span>
             </div>
           </el-form-item>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item class="mb10" label="公司介绍：" prop="introduction">
+                <div style="line-height:1;" v-html="form.introduction"></div>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-row v-if="form.status == 2">
             <el-col :span="24">
               <el-form-item label="备注：" prop="auditRemarks">
