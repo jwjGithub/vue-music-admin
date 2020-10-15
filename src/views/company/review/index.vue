@@ -315,7 +315,7 @@ export default {
         address: row.address, // 地址
         introduction: row.introduction, // 公司介绍
         auditRemarks: row.auditRemarks, // 备注
-        url: row.lisence && row.lisence.url || ''
+        url: row.lisence && row.lisence.tempUrl || ''
       }
       console.log(row, this.form)
       this.resetForm('form')
