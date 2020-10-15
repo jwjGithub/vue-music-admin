@@ -120,6 +120,7 @@
                 <el-image
                   style="width: 100px; height: 100px"
                   :src="form.url"
+                  :preview-src-list="[form.url]"
                 >
                 </el-image>
               </el-form-item>
@@ -128,7 +129,9 @@
           <el-row>
             <el-col :span="24">
               <el-form-item class="mb10" label="公司介绍：" prop="introduction">
-                <div v-html="form.introduction"></div>
+                <el-scrollbar wrap-class="scrollbar-wrapper">
+                  <div class="content-editor" v-html="form.introduction"></div>
+                </el-scrollbar>
               </el-form-item>
             </el-col>
           </el-row>
@@ -418,5 +421,6 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+
 </style>
