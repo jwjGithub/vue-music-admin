@@ -43,6 +43,8 @@
           >
             <el-table-column prop="userId" min-width="150" label="登录用户"></el-table-column>
             <el-table-column prop="ip" min-width="150" label="登录IP"></el-table-column>
+            <el-table-column prop="username" min-width="150" label="登录人账号"></el-table-column>
+            <el-table-column prop="realName" min-width="150" label="登录人姓名"></el-table-column>
             <el-table-column prop="createdTime" min-width="180" label="创建时间"></el-table-column>
           </el-table>
         </el-col>
@@ -71,8 +73,8 @@ export default {
       queryForm: {
         userId: '',
         ip: '',
-        starttime: '', // 开始时间
-        endtime: '', // 结束时间
+        startTime: '', // 开始时间
+        endTime: '', // 结束时间
         page: 1, // 当前页
         limit: 10 // 每页条数
       },
@@ -86,8 +88,8 @@ export default {
     // 查询列表
     getDataList() {
       this.loading = true
-      this.queryForm.starttime = this.timeList && this.timeList[0]
-      this.queryForm.endtime = this.timeList && this.timeList[1]
+      this.queryForm.startTime = this.timeList && this.timeList[0]
+      this.queryForm.endTime = this.timeList && this.timeList[1]
       getDataList(this.queryForm).then(res => {
         this.dataList = res.data || []
         this.total = res.count || 0
