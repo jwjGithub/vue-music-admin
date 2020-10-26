@@ -51,14 +51,15 @@
             <el-table-column prop="status" min-width="150" label="状态">
               <template slot-scope="scope">
                 <span v-if="scope.row.status === 0" class="c-red">未回复</span>
-                <span v-if="scope.row.status === 1" class="c-blue">未回复</span>
+                <span v-if="scope.row.status === 1" class="c-blue">已回复</span>
               </template>
             </el-table-column>
             <el-table-column prop="type" min-width="150" label="类型">
-              <!-- <template slot-scope="scope">
-                <span v-if="scope.row.status === 0" class="c-red">未回复</span>
-                <span v-if="scope.row.status === 1" class="c-blue">未回复</span>
-              </template> -->
+              <template slot-scope="scope">
+                <span v-if="scope.row.status === 0">问题反馈</span>
+                <span v-if="scope.row.status === 1">举报投诉</span>
+                <span v-if="scope.row.status === 2">优化建议</span>
+              </template>
             </el-table-column>
             <el-table-column prop="proposer" min-width="150" label="提交人"></el-table-column>
             <el-table-column prop="email" min-width="150" label="邮箱"></el-table-column>
