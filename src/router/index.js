@@ -99,6 +99,12 @@ export const constantRoutes = [
   //       name: 'State',
   //       component: () => import('@/views/company/state/index'),
   //       meta: { title: '公司状态', icon: 'table' }
+  //     },
+  //      {
+  //       path: 'menu',
+  //       name: 'CompanyMenu',
+  //       component: () => import('@/views/company/menu/index'),
+  //       meta: { title: '菜单管理', icon: 'table' }
   //     }
   //   ]
   // },
