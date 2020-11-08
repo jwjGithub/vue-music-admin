@@ -47,8 +47,19 @@
             </el-table-column>
             <el-table-column prop="sort" min-width="120" label="排序"></el-table-column>
             <el-table-column prop="component" min-width="180" label="组件路径"></el-table-column>
-            <el-table-column prop="statusDes" min-width="180" label="状态"></el-table-column>
-            <el-table-column prop="isHidden" min-width="180" label="是否隐藏">
+            <el-table-column prop="status" min-width="80" label="状态">
+              <template slot-scope="scope">
+                <span v-if="scope.row.status == 'STOP'" class="c-red">停用</span>
+                <span v-else class="c-darkBlue">启用</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="isFree" min-width="80" label="是否收费">
+              <template slot-scope="scope">
+                <span v-if="scope.row.isFree == 1" class="c-red">收费</span>
+                <span v-else class="c-darkBlue">免费</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="isHidden" min-width="80" label="是否隐藏">
               <template slot-scope="scope">
                 <span v-if="scope.row.isHidden == 'Y'" class="c-red">隐藏</span>
                 <span v-else class="c-darkBlue">显示</span>
@@ -156,6 +167,16 @@
                 </div>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="是否收费：" prop="isFree">
+                <div class="w24">
+                  <el-radio v-model="form.isFree" :label="1">收费</el-radio>
+                  <el-radio v-model="form.isFree" :label="0">免费</el-radio>
+                </div>
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
               <el-form-item label="菜单状态：" prop="status">
                 <div class="w24">
@@ -164,6 +185,8 @@
                 </div>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="12">
               <el-form-item label="是否外链：" prop="isExlink">
                 <div class="w24">
@@ -188,7 +211,7 @@ import {
   deleteManageMenu,
   stopManageMenu,
   normalManageMenu
-} from '@/api/system/menu'
+} from '@/api/company/menu'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect'
@@ -271,7 +294,6 @@ export default {
         const menu = { id: 0, title: '主类目', children: [] }
         menu.children = res.data || []
         this.treeList.push(menu)
-        // this.treeList = res.data
       })
     },
     /** 转换菜单数据结构 */
@@ -301,6 +323,7 @@ export default {
         type: 'CONTENTS', // 菜单类型
         parentId: 0, // 父级菜单id
         isHidden: 'N', // 是否隐藏
+        isFree: 0, // 是否收费
         path: '', // 路由地址
         parentName: '', // 父级菜单名称
         component: '', // 组件路径
@@ -368,14 +391,12 @@ export default {
     },
     // 打开删除 type:1 单个 type:2 批量
     openDelete(type, row) {
-      // let title = type === 1 ? '单个' : '批量'
       this.$confirm('此操作将删除菜单, 是否继续?', '菜单删除', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning'
       }).then(() => {
-        let json = type === 1 ? [row.id] : this.selectOption.ids
-        deleteManageMenu(json, type).then(res => {
+        deleteManageMenu(row.id).then(res => {
           this.$notify.success({
             title: '操作成功'
           })
@@ -392,7 +413,7 @@ export default {
         confirmButtonText: '确定',
         type: 'warning'
       }).then(() => {
-        normalManageMenu({ id: row.id }).then(res => {
+        normalManageMenu(row.id).then(res => {
           this.$notify.success({
             title: '操作成功'
           })
@@ -410,7 +431,7 @@ export default {
         confirmButtonText: '确定',
         type: 'warning'
       }).then(() => {
-        stopManageMenu({ id: row.id }).then(res => {
+        stopManageMenu(row.id).then(res => {
           this.$notify.success({
             title: '操作成功'
           })

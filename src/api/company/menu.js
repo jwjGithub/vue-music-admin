@@ -10,7 +10,7 @@ import request from '@/utils/request'
 // 分页查询
 export function getDataList(data) {
   return request({
-    url: '/sys/companymenu/getCompanyMenuList',
+    url: '/sys/companymenu/getMenuList',
     method: 'post',
     data: data
   })
@@ -34,7 +34,7 @@ export function saveEdit(data) {
 // 获取菜单选择树
 export function getManageMenuSelectTree(data) {
   return request({
-    url: '/sys/managemenu/getManageMenuSelectTree',
+    url: '/sys/companymenu/getSelectTree',
     method: 'post',
     data: data
   })
@@ -46,46 +46,25 @@ export function getInfoById(id) {
     method: 'post'
   })
 }
-// 删除 type:1 单个 type:2 批量
-export function deleteManageMenu(data, type) {
-  const url = type === 1 ? '/sys/managemenu/deleteManageMenu' : '/sys/managemenu/deleteBathManageMenu'
-  const json = type === 1 ? { id: data[0] } : data
+// 删除
+export function deleteManageMenu(menuIds) {
   return request({
-    url: url,
-    method: 'post',
-    data: json
+    url: `/sys/companymenu/deleteCompanyMenu/${menuIds}`,
+    method: 'post'
   })
 }
 
 // 停用后台菜单
-export function stopManageMenu(data) {
+export function stopManageMenu(menuIds) {
   return request({
-    url: '/sys/managemenu/stopManageMenu',
-    method: 'post',
-    data: data
-  })
-}
-// 批量停用后台菜单
-export function stopBatchManageMenu(data) {
-  return request({
-    url: '/sys/managemenu/stopBatchManageMenu',
-    method: 'post',
-    data: data
+    url: `/sys/companymenu/stopCompanyMenu/${menuIds}`,
+    method: 'post'
   })
 }
 // 启用后台菜单
-export function normalManageMenu(data) {
+export function normalManageMenu(menuIds) {
   return request({
-    url: '/sys/managemenu/normalManageMenu',
-    method: 'post',
-    data: data
-  })
-}
-// 批量启用后台菜单
-export function normalBatchManageMenu(data) {
-  return request({
-    url: '/sys/managemenu/normalBatchManageMenu',
-    method: 'post',
-    data: data
+    url: `/sys/companymenu/normalCompanyMenu/${menuIds}`,
+    method: 'post'
   })
 }
