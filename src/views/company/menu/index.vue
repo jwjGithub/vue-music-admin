@@ -106,10 +106,18 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="12">
               <el-form-item label="菜单类型：" prop="type">
                 <el-radio v-model="form.type" label="CONTENTS">目录</el-radio>
                 <el-radio v-model="form.type" label="MENU ">菜单</el-radio>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否收费：" prop="isFree">
+                <div class="w24">
+                  <el-radio v-model="form.isFree" :label="1">收费</el-radio>
+                  <el-radio v-model="form.isFree" :label="0">免费</el-radio>
+                </div>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -170,14 +178,6 @@
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="是否收费：" prop="isFree">
-                <div class="w24">
-                  <el-radio v-model="form.isFree" :label="1">收费</el-radio>
-                  <el-radio v-model="form.isFree" :label="0">免费</el-radio>
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
               <el-form-item label="菜单状态：" prop="status">
                 <div class="w24">
                   <el-radio v-model="form.status" label="NORMAL">正常</el-radio>
@@ -185,8 +185,6 @@
                 </div>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="12">
               <el-form-item label="是否外链：" prop="isExlink">
                 <div class="w24">

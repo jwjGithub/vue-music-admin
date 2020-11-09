@@ -104,7 +104,13 @@ export const constantRoutes = [
   //       path: 'menu',
   //       name: 'CompanyMenu',
   //       component: () => import('@/views/company/menu/index'),
-  //       meta: { title: '菜单管理', icon: 'table' }
+  //       meta: { title: '公司菜单管理', icon: 'table' }
+  //     },
+  //      {
+  //       path: 'admin',
+  //       name: 'CompanyAdmin',
+  //       component: () => import('@/views/company/admin/index'),
+  //       meta: { title: '公司管理员管理', icon: 'table' }
   //     }
   //   ]
   // },
