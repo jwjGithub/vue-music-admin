@@ -531,8 +531,8 @@ export default {
     }
   }
   .role-tree{
-    height:300px;
-    overflow: hidden;
+    // height:300px;
+    // overflow: hidden;
   }
 </style>
 <style lang="scss">

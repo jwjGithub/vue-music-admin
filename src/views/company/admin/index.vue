@@ -1,5 +1,5 @@
 <template>
-  <div class="main-body">
+  <div class="main-body main-admin">
     <div class="main-content">
       <el-row :gutter="20">
         <el-col :span="8">
@@ -73,6 +73,7 @@
     </div>
     <!-- 新增/修改 弹窗 -->
     <mus-dialog
+      class="add-role-dialog"
       :title="dialogOption.title"
       :loading="dialogOption.loading"
       :is-show="dialogOption.show"
@@ -85,7 +86,24 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="菜单：" prop="comMenuIds">
-                <treeselect
+                <div class="role-tree">
+                  <!-- <el-scrollbar class="custom-scrollbar"> -->
+                  <el-tree
+                    ref="roleTree"
+                    :data="munuList"
+                    node-key="id"
+                    show-checkbox
+                    accordion
+                    default-expand-all
+                    :expand-on-click-node="true"
+                  >
+                    <span slot-scope="{ data }" class="custom-tree-node">
+                      <span>{{ data.title }}</span>
+                    </span>
+                  </el-tree>
+                  <!-- </el-scrollbar> -->
+                </div>
+                <!-- <treeselect
                   v-model="form.comMenuIds"
                   class="lh20"
                   :no-results-text="'未搜索到数据'"
@@ -96,7 +114,7 @@
                   :show-count="true"
                   :multiple="true"
                   placeholder="选择菜单"
-                />
+                /> -->
               </el-form-item>
             </el-col>
           </el-row>
@@ -120,7 +138,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
   name: 'Menu',
   components: {
-    Treeselect
+    // Treeselect
   },
   data() {
     return {
@@ -154,9 +172,9 @@ export default {
         comMenuIds: ''
       },
       rules: {
-        comMenuIds: [
-          { required: true, message: '请选择菜单', trigger: 'blur' }
-        ]
+        // comMenuIds: [
+        //   { required: true, message: '请选择菜单', trigger: 'blur' }
+        // ]
       }
 
     }
@@ -231,6 +249,7 @@ export default {
         comId: this.company.id,
         comMenuIds: []
       }
+      this.setSelectTree([])
       this.resetForm('form')
     },
     // 打开编辑窗口
@@ -258,9 +277,14 @@ export default {
     // 新增保存
     saveAdd() {
       this.dialogOption.loading = true
+      let comMenuIds = this.getSelectTree()
+      if (comMenuIds.length <= 0) {
+        this.$message.error('请选择菜单')
+        return false
+      }
       let json = {
         comId: this.form.comId,
-        comMenuIds: this.form.comMenuIds.join(',')
+        comMenuIds: comMenuIds.join(',')
       }
       addRelCompanyMenu(json).then(res => {
         this.$notify.success({
@@ -272,6 +296,25 @@ export default {
       }).catch(e => {
         this.dialogOption.loading = false
       })
+    },
+    // 获取选择的树
+    getSelectTree() {
+      let treeArr = this.$refs['roleTree'].getCheckedNodes(false, true)
+      let arr = []
+      treeArr.forEach(item => {
+        arr.push(item.id)
+      })
+      return arr
+    },
+    // 设置选择的树
+    setSelectTree(data) {
+      let arr = []
+      data.forEach(item => {
+        arr.push({ id: item })
+      })
+      setTimeout(() => {
+        this.$refs['roleTree'].setCheckedNodes(arr)
+      }, 0)
     },
     // 打开删除 type:1 单个 type:2 批量
     openDelete(type, row) {
@@ -301,6 +344,10 @@ export default {
 .main-content{
   min-height:100%;
   width:100%;
+}
+.role-tree{
+  height:300px;
+  overflow: hidden;
 }
 .left-tree{
   width:100%;
@@ -349,4 +396,27 @@ export default {
     }
   }
 }
+</style>
+<style lang="scss">
+  .main-admin{
+    .add-role-dialog{
+      .el-tree{
+        >.el-tree-node{
+          >.el-tree-node__content{
+            background-color:#f5f8fa;
+            border: solid 1px #e5e5e5;
+            height:50px;
+          }
+          .el-tree-node__children{
+            .el-tree-node__content{
+              border-left: solid 1px #e5e5e5;
+              border-right: solid 1px #e5e5e5;
+              border-bottom: solid 1px #e5e5e5;
+              height:35px;
+            }
+          }
+        }
+      }
+    }
+  }
 </style>
