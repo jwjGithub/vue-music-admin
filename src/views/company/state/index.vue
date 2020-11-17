@@ -49,6 +49,7 @@
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="openEdit(scope.row)">修改</el-button>
                 <el-button size="mini" type="text" @click="openDetails(scope.row)">详情</el-button>
               </template>
             </el-table-column>
@@ -63,7 +64,7 @@
         @pagination="getDataList"
       />
     </div>
-    <!-- 新增/修改 弹窗 -->
+    <!-- 详情 弹窗 -->
     <mus-dialog
       :title="dialogOption.title"
       :loading="dialogOption.loading"
@@ -125,20 +126,74 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <!-- <el-row v-if="form.status == 2">
+        </el-form>
+      </div>
+    </mus-dialog>
+    <!-- 新增/修改 弹窗 -->
+    <mus-dialog
+      :title="dialogEdit.title"
+      :loading="dialogEdit.loading"
+      :is-show="dialogEdit.show"
+      :width="'860px'"
+      @handleClose="dialogEdit.show = false"
+      @handleConfirm="handleConfirm"
+    >
+      <div class="pl24 pr24 pt24 pb24">
+        <el-form ref="editForm" :model="form" :rules="rules" label-width="130px" :inline="true">
+          <el-form-item label="用户名：" prop="username">
+            <el-input v-model="form.username" class="w24"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱：" prop="email">
+            <el-input v-model="form.email" class="w24"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号：" prop="mobile">
+            <el-input v-model="form.mobile" class="w24"></el-input>
+          </el-form-item>
+          <el-form-item label="用户姓名：" prop="realname">
+            <el-input v-model="form.realname" class="w24"></el-input>
+          </el-form-item>
+          <el-form-item label="性别：" prop="gender">
+            <el-select v-model="form.gender" clearable placeholder="" class="w24">
+              <el-option label="男" value="male" />
+              <el-option label="女" value="female" />
+              <el-option label="未知" value="unknow" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="公司名：" prop="companyName">
+            <el-input v-model="form.companyName" class="w24"></el-input>
+          </el-form-item>
+          <el-form-item class="mb10" label="地址：" prop="address">
+            <el-input v-model="form.address" class="w24"></el-input>
+          </el-form-item>
+          <el-form-item class="mb10" label="状态：" prop="status">
+            <el-select v-model="form.status" clearable placeholder="" class="w24">
+              <el-option label="正常" :value="0" />
+              <el-option label="作废" :value="1" />
+              <el-option label="审核中" :value="2" />
+              <el-option label="退回" :value="3" />
+            </el-select>
+          </el-form-item>
+          <el-row>
             <el-col :span="24">
-              <el-form-item label="备注：" prop="auditRemarks">
-                <el-input v-model="form.auditRemarks" style="width:600px;" type="textarea" :rows="4" :resize="'none'"></el-input>
+              <el-form-item class="mb10" label="公司资质：" prop="url">
+                <el-image
+                  style="width: 100px; height: 100px"
+                  :src="form.url"
+                  :preview-src-list="[form.url]"
+                >
+                </el-image>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="24">
-              <el-form-item label=" ">
-                <el-button type="primary" class="w14 mt24 mr24" @click="handleConfirm(1)">通过</el-button>
-                <el-button type="danger" class="w14 mt24 mr24" @click="handleConfirm(2)">作废</el-button>
-                <el-button type="warning" class="w14 mt24" @click="handleConfirm(3)">驳回</el-button>
+              <el-form-item class="mb10" label="公司介绍：" prop="introduction">
+                <el-scrollbar wrap-class="scrollbar-wrapper">
+                  <div class="content-editor" v-html="form.introduction"></div>
+                </el-scrollbar>
               </el-form-item>
             </el-col>
-          </el-row> -->
+          </el-row>
         </el-form>
       </div>
     </mus-dialog>
@@ -147,7 +202,8 @@
 <script>
 import {
   getDataList,
-  saveAdd
+  saveAdd,
+  updateCompanyInfo
 } from '@/api/company/review'
 export default {
   name: 'Review',
@@ -156,6 +212,12 @@ export default {
       total: 0,
       // 默认弹窗对象
       dialogOption: {
+        title: '',
+        show: false,
+        loading: false
+      },
+      // 修改弹窗对象
+      dialogEdit: {
         title: '',
         show: false,
         loading: false
@@ -182,27 +244,27 @@ export default {
         file: '' // 公司附件
       },
       rules: {
-        // username: [
-        //   { required: true, message: '请输入用户名', trigger: 'blur' }
-        // ],
-        // mobile: [
-        //   { required: true, message: '请输入手机号', trigger: 'blur' }
-        // ],
-        // phoneCode: [
-        //   { required: true, message: '请输入手机验证码', trigger: 'blur' }
-        // ],
-        // userType: [
-        //   { required: true, message: '请选择用户类型', trigger: ['blur', 'change'] }
-        // ],
-        // status: [
-        //   { required: true, message: '请选择用户状态', trigger: ['blur', 'change'] }
-        // ],
-        // gender: [
-        //   { required: true, message: '请选择性别', trigger: ['blur', 'change'] }
-        // ],
-        // userManageroleId: [
-        //   { required: true, message: '请选择角色', trigger: ['blur', 'change'] }
-        // ]
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' }
+        ],
+        realname: [
+          { required: true, message: '请输入用户姓名', trigger: 'blur' }
+        ],
+        companyName: [
+          { required: true, message: '请输入公司名称', trigger: ['blur', 'change'] }
+        ],
+        status: [
+          { required: true, message: '请选择状态', trigger: ['blur', 'change'] }
+        ],
+        gender: [
+          { required: true, message: '请选择性别', trigger: ['blur', 'change'] }
+        ]
       }
 
     }
@@ -242,52 +304,40 @@ export default {
         auditRemarks: row.auditRemarks, // 备注
         url: row.lisence && row.lisence.tempUrl || ''
       }
-      console.log(row, this.form)
       this.resetForm('form')
+    },
+    // 打开修改功能
+    openEdit(row) {
+      this.dialogEdit = {
+        title: '详情',
+        show: true,
+        loading: false
+      }
+      let json = row.sysUserEntity || {}
+      this.form = {
+        status: json.status,
+        userId: json.userId,
+        username: json.username, // 用户名
+        email: json.email, // 邮箱
+        mobile: json.mobile, // 手机号
+        realname: json.realname, // 真名
+        gender: json.gender, //  性别 male 男 female 女 unknown 未知
+        companyName: row.companyName, // 公司名
+        address: row.address, // 地址
+        introduction: row.introduction, // 公司介绍
+        auditRemarks: row.auditRemarks, // 备注
+        url: row.lisence && row.lisence.tempUrl || ''
+      }
+      this.resetForm('editForm')
     },
     // 保存回调 1通过 2作废 3驳回
     handleConfirm(type) {
-      let json = {
-        status: 0,
-        user_id: this.form.userId,
-        mobile: this.form.mobile,
-        auditRemarks: this.form.auditRemarks
-      }
-      let title = ''
-      let message = ''
-      if (type === 1) {
-        json.status = 0
-        title = '申请通过'
-        message = '此操作将通过当前申请, 是否继续?'
-      }
-      if (type === 2) {
-        json.status = 1
-        title = '申请作废'
-        message = '此操作将作废当前申请, 是否继续?'
-      }
-      if (type === 3) {
-        json.status = 3
-        title = '申请驳回'
-        message = '此操作将驳回当前申请, 是否继续?'
-      }
-      this.$confirm(message, title, {
-        cancelButtonText: '取消',
-        confirmButtonText: '确定',
-        type: 'warning'
-      }).then(() => {
-        this.dialogOption.loading = true
-        saveAdd(json).then(res => {
-          this.$notify.success({
-            title: '操作成功'
-          })
-          this.getDataList()
-          this.dialogOption.show = false
-          this.dialogOption.loading = false
-        }).catch(() => {
-          this.dialogOption.loading = false
-        })
-      }).catch(() => {
-
+      this.$refs['editForm'].validate((valid) => {
+        if (valid) {
+          console.log('01')
+        } else {
+          return false
+        }
       })
     }
   }

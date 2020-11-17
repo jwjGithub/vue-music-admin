@@ -32,3 +32,11 @@ export function saveAdd(data) {
     data: data
   })
 }
+// 修改
+export function updateCompanyInfo(data) {
+  return request({
+    url: '/company/signup/updateCompanyInfo',
+    method: 'post',
+    data: data
+  })
+}
