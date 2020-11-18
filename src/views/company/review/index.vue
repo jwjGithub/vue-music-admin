@@ -85,17 +85,17 @@
           <el-step title="第四步" description="填写公司信息"></el-step>
         </el-steps> -->
         <el-form ref="form" :model="form" :rules="rules" label-width="100px" :inline="true">
-          <el-form-item class="mb1" label="用户名：" prop="username">
+          <el-form-item class="mb1" label="管理员账号：" prop="username">
             <div class="w24">{{ form.username }}</div>
           </el-form-item>
-          <el-form-item class="mb1" label="邮箱：" prop="email">
-            <div class="w24">{{ form.email }}</div>
+          <el-form-item class="mb1" label="管理员姓名：" prop="realname">
+            <div class="w24">{{ form.realname }}</div>
           </el-form-item>
           <el-form-item class="mb1" label="手机号：" prop="mobile">
             <div class="w24">{{ form.mobile }}</div>
           </el-form-item>
-          <el-form-item class="mb1" label="用户姓名：" prop="realname">
-            <div class="w24">{{ form.realname }}</div>
+          <el-form-item class="mb1" label="邮箱：" prop="email">
+            <div class="w24">{{ form.email }}</div>
           </el-form-item>
           <el-form-item class="mb1" label="性别：" prop="gender">
             <div class="w24">{{ form.gender == 'male' ? '男' : (form.gender == 'female' ? '女' : '未知') }}</div>
@@ -105,6 +105,19 @@
           </el-form-item>
           <el-form-item class="mb10" label="地址：" prop="address">
             <div class="w24">{{ form.address }}</div>
+          </el-form-item>
+          <el-form-item class="mb10" label="网址：" prop="url">
+            <div class="w24">{{ form.url }}</div>
+          </el-form-item>
+          <el-form-item class="mb10" label="公司性质：" prop="companyType">
+            <div class="w24">
+              <span v-if="form.companyType == 1" class="c-darkBlue">国有企业</span>
+              <span v-if="form.companyType == 2" class="c-darkBlue">集体企业</span>
+              <span v-if="form.companyType == 3" class="c-darkBlue">联营企业</span>
+              <span v-if="form.companyType == 4" class="c-darkBlue">股份合作制企业</span>
+              <span v-if="form.companyType == 5" class="c-darkBlue">私营企业</span>
+              <span v-if="form.companyType == 6" class="c-darkBlue">合伙企业</span>
+            </div>
           </el-form-item>
           <el-form-item class="mb10" label="状态：" prop="status">
             <div class="w24">
@@ -116,11 +129,11 @@
           </el-form-item>
           <el-row>
             <el-col :span="24">
-              <el-form-item class="mb10" label="公司资质：" prop="url">
+              <el-form-item class="mb10" label="公司资质：" prop="imgUrl">
                 <el-image
                   style="width: 100px; height: 100px"
-                  :src="form.url"
-                  :preview-src-list="[form.url]"
+                  :src="form.imgUrl"
+                  :preview-src-list="[form.imgUrl]"
                 >
                 </el-image>
               </el-form-item>
@@ -307,18 +320,21 @@ export default {
       let json = row.sysUserEntity || {}
       this.form = {
         comId: row.id, // 公司id
-        status: json.status,
         userId: json.userId,
-        username: json.username, // 用户名
-        email: json.email, // 邮箱
+        imgUrl: row.lisence && row.lisence.tempUrl || '',
+        username: json.username, // 管理员账号：
+        realname: json.realname, // 管理员姓名：
         mobile: json.mobile, // 手机号
-        realname: json.realname, // 真名
+        email: json.email, // 邮箱
         gender: json.gender, //  性别 male 男 female 女 unknown 未知
         companyName: row.companyName, // 公司名
         address: row.address, // 地址
+        url: row.url, // 公司网址
+        companyType: row.companyType, // 公司性质
+        status: json.status, // 状态
+        lisenceAtt: row.lisence && row.lisence.id || '', // 公司资质
         introduction: row.introduction, // 公司介绍
-        auditRemarks: row.auditRemarks, // 备注
-        url: row.lisence && row.lisence.tempUrl || ''
+        auditRemarks: row.auditRemarks // 备注
       }
       console.log(row, this.form)
       this.resetForm('form')
