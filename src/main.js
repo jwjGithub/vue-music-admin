@@ -2,7 +2,7 @@
  * @Date: 2020-09-10 17:16:46
  * @Description:
  * @LastEditors: JWJ
- * @LastEditTime: 2020-11-18 16:25:27
+ * @LastEditTime: 2020-11-18 17:48:20
  * @FilePath: \vue-music-admin\src\main.js
  */
 import Vue from 'vue'
@@ -47,10 +47,10 @@ Vue.component('MusDialog', MusDialog)
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
+// if (process.env.NODE_ENV === 'production') {
+//   const { mockXHR } = require('../mock')
+//   mockXHR()
+// }
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale, size: 'medium' })
