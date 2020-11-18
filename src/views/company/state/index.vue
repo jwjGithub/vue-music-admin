@@ -176,21 +176,25 @@
           <el-row>
             <el-col :span="24">
               <el-form-item class="mb10" label="公司资质：" prop="url">
-                <el-image
-                  style="width: 100px; height: 100px"
-                  :src="form.url"
-                  :preview-src-list="[form.url]"
+                <el-upload
+                  class="avatar-uploader w24"
+                  :headers="{token: getToken()}"
+                  :action="baseURL + '/company/signup/uploadImg'"
+                  accept="image/*"
+                  :before-upload="handleBeforeUpload"
+                  :show-file-list="false"
+                  :on-success="handleSuccess"
                 >
-                </el-image>
+                  <img v-if="form.url" :src="form.url" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item class="mb10" label="公司介绍：" prop="introduction">
-                <el-scrollbar wrap-class="scrollbar-wrapper">
-                  <div class="content-editor" v-html="form.introduction"></div>
-                </el-scrollbar>
+              <el-form-item label="公司介绍：" style="padding-bottom:66px;" prop="introduction">
+                <Editor v-model="form.introduction" class="w50" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -205,8 +209,12 @@ import {
   saveAdd,
   updateCompanyInfo
 } from '@/api/company/review'
+import Editor from '@/components/Editor'
 export default {
   name: 'Review',
+  components: {
+    Editor
+  },
   data() {
     return {
       total: 0,
@@ -309,12 +317,13 @@ export default {
     // 打开修改功能
     openEdit(row) {
       this.dialogEdit = {
-        title: '详情',
+        title: '修改',
         show: true,
         loading: false
       }
       let json = row.sysUserEntity || {}
       this.form = {
+        id: row.id,
         status: json.status,
         userId: json.userId,
         username: json.username, // 用户名
@@ -334,14 +343,66 @@ export default {
     handleConfirm(type) {
       this.$refs['editForm'].validate((valid) => {
         if (valid) {
-          console.log('01')
+          this.dialogEdit.loading = true
+          updateCompanyInfo(this.form).then(res => {
+            this.dialogEdit.loading = false
+            this.dialogEdit.show = false
+            this.getDataList()
+          }).catch(() => {
+            this.dialogEdit.loading = false
+          })
         } else {
           return false
         }
       })
+    },
+    // 选择文件回调
+    handleBeforeUpload(file) {
+      const reg = '.*\\.(jpg|png|gif|JPG|PNG|GIF)'
+      if (file.name.match(reg) == null) {
+        this.$notify.error({ title: '对不起，上传格式不正确，请重新上传' })
+        return false
+      }
+      if (file.size > 1024 * 1024 * 10) {
+        this.$notify.error({ title: '对不起，文件不能大于10M，请重新上传' })
+        return false
+      }
+      return true
+    },
+    // 上传成功回调
+    handleSuccess(res, file, fileList) {
+      console.log(res, '---')
+      this.form.url = res.data.url
+      this.form.lisenceAtt = res.data.id
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+// 头像上传样式
+  .avatar-uploader{
+    text-align: left;
+    .el-upload {
+      border: 1px dashed #d9d9d9;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      // &:hover {
+      //   border-color: #409EFF;
+      // }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        text-align: center;
+      }
+      .avatar {
+        width: 100px;
+        height: 100px;
+        display: block;
+      }
+    }
+  }
 </style>

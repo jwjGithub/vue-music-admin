@@ -1,3 +1,10 @@
+/*
+ * @Date: 2020-09-10 17:16:46
+ * @Description:
+ * @LastEditors: JWJ
+ * @LastEditTime: 2020-11-18 16:25:27
+ * @FilePath: \vue-music-admin\src\main.js
+ */
 import Vue from 'vue'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
@@ -22,7 +29,7 @@ import { parseTime, resetForm, handleTree } from '@/utils/index'
 // 全局组件引入
 import Pagination from '@/components/Pagination'
 import MusDialog from '@/components/MusDialog'
-
+Vue.prototype.baseURL = process.env.VUE_APP_BASE_API
 // 全局方法挂载
 Vue.prototype.getToken = getToken
 Vue.prototype.parseTime = parseTime
