@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2020-11-26 10:42:37
  * @LastEditors: jwj
- * @LastEditTime: 2020-11-26 22:21:22
+ * @LastEditTime: 2020-11-26 22:24:49
 -->
 <template>
   <div class="main-body">
@@ -155,7 +155,6 @@ export default {
       getDataList().then(res => {
         // this.dataList = this.handleTree(res.data, 'id')
         this.dataList = res.data || []
-        console.log(this.dataList, res)
         this.loading = false
       }).catch(() => {
         this.loading = false
