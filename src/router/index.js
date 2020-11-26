@@ -181,6 +181,21 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
+  // {
+  //   path: '/description',
+  //   component: Layout,
+  //   redirect: '/description/index',
+  //   name: '',
+  //   meta: { title: '说明页管理', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'DescriptionIndex',
+  //       component: () => import('@/views/description/index'),
+  //       meta: { title: '说明页管理', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example1',
     component: Layout,
@@ -326,6 +341,7 @@ export const constantRoutes = [
       }
     ]
   }
+
   // 404 page must be placed at the end !!!
   // { path: '*', redirect: '/404', hidden: true }
 ]
