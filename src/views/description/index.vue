@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2020-11-26 10:42:37
  * @LastEditors: jwj
- * @LastEditTime: 2020-11-26 20:16:58
+ * @LastEditTime: 2020-11-26 22:21:22
 -->
 <template>
   <div class="main-body">
@@ -26,7 +26,8 @@
             <el-table-column prop="name" min-width="150" label="名称"></el-table-column>
             <el-table-column min-width="120" label="状态">
               <template slot-scope="scope">
-                <span>{{ scope.row.status === 1 ? '启用' : '停用' }}</span>
+                <span v-if="scope.row.status === 1" class="c-blue">启用</span>
+                <span v-else class="c-red">停用</span>
               </template>
             </el-table-column>
             <el-table-column prop="expireTime" min-width="180" label="过期时间"></el-table-column>
@@ -62,7 +63,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="过期时间：">
+              <el-form-item label="过期时间：" prop="expire_time">
                 <el-date-picker v-model="form.expire_time" type="date" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择过期时间" style="width:100%;"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -219,7 +220,7 @@ export default {
         let json = res.data || {}
         this.form = {
           name: json.name,
-          expire_time: json.updatedTime,
+          expire_time: json.expireTime,
           parent_id: json.parentId,
           content: json.content,
           id: json.id
