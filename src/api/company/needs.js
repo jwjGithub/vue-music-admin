@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2020-12-01 14:46:57
- * @LastEditors: jwj
- * @LastEditTime: 2020-12-01 20:24:38
+ * @LastEditors: JWJ
+ * @LastEditTime: 2020-12-01 21:29:47
  */
 import request from '@/utils/request'
 
@@ -59,6 +59,14 @@ export function getMusicPageInOptional(data) {
 export function deleteWorks(data) {
   return request({
     url: '/company/needs/delWorksInOptional',
+    method: 'post',
+    data: data
+  })
+}
+// 更新需求状态
+export function updateOption(data) {
+  return request({
+    url: '/company/needs/updateOption',
     method: 'post',
     data: data
   })

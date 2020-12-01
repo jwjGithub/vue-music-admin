@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2020-12-01 14:31:05
- * @LastEditors: jwj
- * @LastEditTime: 2020-12-01 17:53:36
+ * @LastEditors: JWJ
+ * @LastEditTime: 2020-12-01 23:16:18
 -->
 <template>
   <div class="main-body">
@@ -66,7 +66,7 @@
       </el-form>
       <el-row class="pt20 pb10">
         <el-col :span="24">
-          <el-button type="danger" class="mr20 mb10" :disabled="selectOption.multiple" @click="openDelete(2,null)">批量删除</el-button>
+          <el-button type="danger" class="mr20 mb10" :disabled="selectOption.multiple" @click="openDelete()">批量删除</el-button>
         </el-col>
       </el-row>
       <el-row class="pb10">
@@ -93,7 +93,8 @@
             <el-table-column prop="contributionNum" min-width="150" label="投稿数"></el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="openEdit(scope.row)">启用</el-button>
+                <el-button v-if="scope.row.status === 0" size="mini" type="text" @click="openStopUsing(scope.row)">停用</el-button>
+                <el-button v-if="scope.row.status === 2" size="mini" type="text" @click="usingLibrary(scope.row)">启用</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -107,19 +108,21 @@
         @pagination="getDataList"
       />
     </div>
-    <!-- 需求 弹窗 -->
+    <!-- 需求详情 弹窗 -->
     <mus-dialog
       :title="dialogOption.title"
       :loading="dialogOption.loading"
       :is-show="dialogOption.show"
+      :is-show-ok="false"
+      :is-show-close="false"
       :width="'860px'"
       @handleClose="dialogOption.show = false"
     >
       <div class="pl24 pr24 pt24 pb24">
-        <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+        <el-form ref="form" :model="form" label-width="130px">
           <el-row>
             <el-col :span="24">
-              <el-form-item label="删除理由" style="padding-bottom:66px;" prop="reason">
+              <el-form-item label="需求内容" style="padding-bottom:66px;" prop="reason">
                 <Editor v-model="form.reason" />
               </el-form-item>
             </el-col>
@@ -145,12 +148,33 @@
           </el-col>
         </el-row>
         <pagination
-          v-show="total>0"
-          :total="Number(total)"
-          :page.sync="queryForm.page"
-          :limit.sync="queryForm.limit"
-          @pagination="getDataList"
+          v-show="musicTotal>0"
+          :total="Number(musicTotal)"
+          :page.sync="libraryInfo.page"
+          :limit.sync="libraryInfo.limit"
+          @pagination="getMusicPageInOptional"
         />
+      </div>
+    </mus-dialog>
+    <!-- 需求库、作品删除 弹窗 -->
+    <mus-dialog
+      :title="dialogDelete.title"
+      :loading="dialogDelete.loading"
+      :is-show="dialogDelete.show"
+      :width="'460px'"
+      @handleClose="dialogDelete.show = false"
+      @handleConfirm="handleConfirm"
+    >
+      <div class="pl24 pr24 pt24">
+        <el-form ref="deletefForm" :model="deletefForm" :rules="deletefRules" label-width="80px">
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="说明" style="padding-bottom:66px;" prop="reason">
+                <el-input v-model="deletefForm.reason" class="w24"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </div>
     </mus-dialog>
   </div>
@@ -160,12 +184,8 @@ import {
   getDataList,
   getCompanyList,
   getMusicPageInOptional,
-  // saveAdd,
-  // saveEdit,
-  // deleteManageMenu,
-  // stopManageMenu,
-  // normalManageMenu
-  deleteWorks
+  deleteWorks,
+  updateOption
 } from '@/api/company/needs'
 import Editor from '@/components/Editor'
 export default {
@@ -190,6 +210,12 @@ export default {
         show: false,
         loading: false
       },
+      // 删除弹窗对象
+      dialogDelete: {
+        title: '',
+        show: false,
+        loading: false
+      },
       loading: false,
       dataList: [],
       companyList: [], // 公司下拉列表
@@ -205,14 +231,22 @@ export default {
       },
       total: 0,
       form: {
+        content: '' // 内容
+      },
+      libraryInfo: { // 需求库信息
+        page: 1,
+        limit: 10
+      },
+      musicTotal: [], // 需求库作品列表总条数
+      musicList: [], // 需求库作品列表
+      deletefForm: {
         reason: '' // 删除理由
       },
-      rules: {
+      deletefRules: {
         reason: [
-          { required: true, message: '请输入删除理由', trigger: 'blur' }
+          { required: true, message: '请输入内容', trigger: 'blur' }
         ]
-      },
-      musicList: []// 需求库作品列表
+      }
     }
   },
   created() {
@@ -246,118 +280,55 @@ export default {
         show: true,
         loading: false
       }
-      let josnInfo = {
-        optionalType: row.optionalType,
-        id: row.optionalType === 0 ? row.optionalLyricsId : row.optionalBaseId,
-        page: 1,
-        limit: 10
-      }
-      this.getMusicPageInOptional(josnInfo)
+      this.form = row
+      this.libraryInfo.optionalType = row.optionalType
+      this.libraryInfo.id = row.optionalType === 0 ? row.optionalLyricsId : row.optionalBaseId
+      this.getMusicPageInOptional()
     },
     // 需求库下的作品列表
-    getMusicPageInOptional(josnInfo) {
+    getMusicPageInOptional() {
       this.loading = true
-      getMusicPageInOptional(josnInfo).then(res => {
+      getMusicPageInOptional(this.libraryInfo).then(res => {
         this.musicList = res.data || []
-        this.total = res.count
+        this.musicTotal = res.count
         this.loading = false
       })
     },
     // 打开作品删除
     openWorksDelete(row) {
-      this.$confirm('此操作将删除作品, 是否继续?', '作品删除', {
-        cancelButtonText: '取消',
-        confirmButtonText: '确定',
-        type: 'warning'
-      }).then(() => {
-        // let ids = this.selectOption.ids.join(',')
-        // deleteWorks(ids).then(res => {
-        //   this.$notify.success({
-        //     title: '操作成功'
-        //   })
-        //   this.getDataList()
-        // })
-      }).catch(() => {})
-    },
-    // 打开新增窗口
-    // openAdd(row) {
-    //   this.dialogOption = {
-    //     title: '新增菜单',
-    //     show: true,
-    //     loading: false
-    //   }
-    //   this.form = {
-    //     isExlink: 'N', // 是否外链
-    //     icon: '', // 图标
-    //     sort: '', // 排序
-    //     title: '', // 菜单标题
-    //     type: 'CONTENTS', // 菜单类型
-    //     parentId: 0, // 父级菜单id
-    //     isHidden: 'N', // 是否隐藏
-    //     isFree: 0, // 是否收费
-    //     path: '', // 路由地址
-    //     parentName: '', // 父级菜单名称
-    //     component: '', // 组件路径
-    //     name: '', // 路由名称
-    //     status: 'NORMAL' // 菜单状态
-    //   }
-    //   if (row != null) {
-    //     this.form.parentId = row.id
-    //   }
-    //   this.resetForm('form')
-    // },
-    // 打开编辑窗口
-    openEdit(row) {
-      row.parentId = row.parentId === 0 ? null : row.parentId
-      this.dialogOption = {
-        title: '编辑菜单',
+      this.dialogDelete = {
+        title: '作品删除',
         show: true,
         loading: false
       }
-      this.form = JSON.parse(JSON.stringify(row))
-      this.resetForm('form')
+      this.deletefForm = {
+        workIds: row.id, // 多个用逗号隔开
+        optionalType: this.libraryInfo.optionalType, //	库类型，0词 ，1曲
+        optionalId: this.libraryInfo.id, // 库ID
+        reason: ''// 删除理由
+      }
     },
-    // 保存回调
+    // 删除保存回调
     handleConfirm() {
-      this.$refs['form'].validate((valid) => {
+      this.$refs['deletefForm'].validate((valid) => {
         if (valid) {
-          if (this.form.id) {
-            this.saveEdit()
+          if (this.dialogDelete.type === 1) {
+            this.saveStop()
           } else {
-            this.saveAdd()
+            this.dialogDelete.loading = true
+            deleteWorks(this.deletefForm).then(res => {
+              this.$notify.success({ title: '删除成功' })
+              this.getMusicPageInOptional()
+              this.dialogDelete.loading = false
+              this.dialogDelete.show = false
+            }).catch(() => {
+              this.dialogDelete.loading = false
+            })
           }
         } else {
           return false
         }
       })
-    },
-    // 新增保存
-    saveAdd() {
-      // this.dialogOption.loading = true
-      // saveAdd(this.form).then(res => {
-      //   this.$notify.success({
-      //     title: '保存成功'
-      //   })
-      //   this.getDataList()
-      //   this.dialogOption.show = false
-      //   this.dialogOption.loading = false
-      // }).catch(e => {
-      //   this.dialogOption.loading = false
-      // })
-    },
-    // 编辑保存
-    saveEdit() {
-      // this.dialogOption.loading = true
-      // saveEdit(this.form).then(res => {
-      //   this.$notify.success({
-      //     title: '保存成功'
-      //   })
-      //   this.getDataList()
-      //   this.dialogOption.show = false
-      //   this.dialogOption.loading = false
-      // }).catch(e => {
-      //   this.dialogOption.loading = false
-      // })
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -365,56 +336,65 @@ export default {
       this.selectOption.single = selection.length !== 1
       this.selectOption.multiple = !selection.length
     },
-    // 打开删除 type:1 单个 type:2 批量
+    // 打开批量删除
     openDelete(type, row) {
-      this.$confirm('此操作将删除需求, 是否继续?', '需求删除', {
+      this.dialogDelete = {
+        title: '需求库删除',
+        type: 1,
+        show: true,
+        loading: false
+      }
+      this.deletefForm = {
+        status: 1, // 多个用逗号隔开
+        optionalIds: this.selectOption.ids.join(','), // 库ID
+        reason: ''// 删除理由
+      }
+    },
+    // 启用
+    usingLibrary(row) {
+      this.$confirm('此操作将启用需求库, 是否继续?', '需求库启用', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning'
       }).then(() => {
-        let ids = this.selectOption.ids.join(',')
-        // deleteManageMenu(ids).then(res => {
-        //   this.$notify.success({
-        //     title: '操作成功'
-        //   })
-        //   this.getDataList()
-        // })
+        let jsonInfo = {
+          optionalIds: row.id,
+          status: 0
+        }
+        updateOption(jsonInfo).then(res => {
+          this.$notify.success({
+            title: '操作成功'
+          })
+          this.getDataList()
+        }).catch(() => {
+        })
       }).catch(() => {})
     },
-    // 启用保存
-    normalManageMenu(row) {
-      // this.$confirm('此操作将启用菜单, 是否继续?', '菜单启用', {
-      //   cancelButtonText: '取消',
-      //   confirmButtonText: '确定',
-      //   type: 'warning'
-      // }).then(() => {
-      //   normalManageMenu(row.id).then(res => {
-      //     this.$notify.success({
-      //       title: '操作成功'
-      //     })
-      //     this.getDataList()
-      //   }).catch(() => {
-      //   })
-      // }).catch(() => {
-
-      // })
-    },
     // 打开停用
-    stopManageMenu(row) {
-      // this.$confirm('此操作将单个停用菜单, 是否继续?', '菜单停用', {
-      //   cancelButtonText: '取消',
-      //   confirmButtonText: '确定',
-      //   type: 'warning'
-      // }).then(() => {
-      //   stopManageMenu(row.id).then(res => {
-      //     this.$notify.success({
-      //       title: '操作成功'
-      //     })
-      //     this.getDataList()
-      //   })
-      // }).catch(() => {
-
-      // })
+    openStopUsing(row) {
+      this.dialogDelete = {
+        title: '需求库停用',
+        type: 1,
+        show: true,
+        loading: false
+      }
+      this.deletefForm = {
+        status: 2, // 多个用逗号隔开
+        optionalIds: row.id, // 库ID
+        reason: ''// 删除理由
+      }
+    },
+    // 停用、批量删除保存
+    saveStop() {
+      this.dialogDelete.loading = true
+      updateOption(this.deletefForm).then(res => {
+        this.$notify.success({ title: '操作成功' })
+        this.getDataList()
+        this.dialogDelete.loading = false
+        this.dialogDelete.show = false
+      }).catch(() => {
+        this.dialogDelete.loading = false
+      })
     }
   }
 }
