@@ -111,6 +111,12 @@ export const constantRoutes = [
   //       name: 'CompanyAdmin',
   //       component: () => import('@/views/company/admin/index'),
   //       meta: { title: '公司管理员管理', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'needs',
+  //       name: 'CompanyNeeds',
+  //       component: () => import('@/views/company/needs/index'),
+  //       meta: { title: '公司需求管理', icon: 'table' }
   //     }
   //   ]
   // },
