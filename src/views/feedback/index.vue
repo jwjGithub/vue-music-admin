@@ -9,7 +9,7 @@
             </el-form-item>
             <el-form-item label="问题类型" prop="type">
               <el-select v-model="queryForm.type" clearable placeholder="" class="w24">
-                <el-option value="" label="全部" />
+                <el-option :value="null" label="全部" />
                 <el-option :value="0" label="问题反馈" />
                 <el-option :value="1" label="举报投诉" />
                 <el-option :value="2" label="优化建议" />
