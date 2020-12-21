@@ -20,7 +20,7 @@
             </el-form-item>
             <el-form-item label="提交时间" prop="createdTime">
               <el-date-picker
-                v-model="form.createdTime"
+                v-model="queryForm.createdTime"
                 class="w24"
                 type="date"
                 value-format="yyyy-MM-dd"
