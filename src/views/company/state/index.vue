@@ -7,6 +7,9 @@
             <el-form-item label="公司名称" prop="com_name">
               <el-input v-model="queryForm.com_name" class="w24"></el-input>
             </el-form-item>
+            <el-form-item label="申请人姓名" prop="realname">
+              <el-input v-model="queryForm.realname" class="w24"></el-input>
+            </el-form-item>
           </div>
           <div class="right-btn">
             <el-form-item>
@@ -260,6 +263,7 @@ export default {
       dataList: [],
       queryForm: {
         com_name: '', // 公司名称
+        realname: '', // 申请人
         status: '0,1,2,3', // 审核状态，0正常，1作废，2审核中，3退回，多种状态传 1,2
         page: 1, // 当前页
         limit: 10 // 每页条数
