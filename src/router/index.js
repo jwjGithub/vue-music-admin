@@ -346,6 +346,27 @@ export const constantRoutes = [
         meta: { title: '接口测试', icon: 'table' }
       }
     ]
+  },
+  {
+    path: '/songbook',
+    component: Layout,
+    redirect: '/songbook/songManage',
+    name: 'Songbook',
+    meta: { title: '曲库管理', icon: 'tree' },
+    children: [
+      {
+        path: 'songManage',
+        name: 'SongManage',
+        component: () => import('@/views/songbook/songManage/index'),
+        meta: { title: '歌曲管理', icon: 'table' }
+      },
+      {
+        path: 'wordManage',
+        name: 'WordManage',
+        component: () => import('@/views/songbook/wordManage/index'),
+        meta: { title: '词管理', icon: 'table' }
+      }
+    ]
   }
 
   // 404 page must be placed at the end !!!
