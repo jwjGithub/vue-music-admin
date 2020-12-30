@@ -78,6 +78,12 @@ export const constantRoutes = [
   //       name: 'Menu',
   //       component: () => import('@/views/system/menu/index'),
   //       meta: { title: '菜单管理', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'banner',
+  //       name: 'Banner',
+  //       component: () => import('@/views/system/banner/index'),
+  //       meta: { title: 'banner配置', icon: 'table' }
   //     }
   //   ]
   // },
@@ -358,14 +364,20 @@ export const constantRoutes = [
         path: 'songManage',
         name: 'SongManage',
         component: () => import('@/views/songbook/songManage/index'),
-        meta: { title: '歌曲管理', icon: 'table' }
+        meta: { title: '作品管理', icon: 'table' }
       },
       {
-        path: 'wordManage',
-        name: 'WordManage',
-        component: () => import('@/views/songbook/wordManage/index'),
-        meta: { title: '词管理', icon: 'table' }
+        path: 'banner',
+        name: 'Banner',
+        component: () => import('@/views/songbook/banner/index'),
+        meta: { title: 'banner配置', icon: 'table' }
       }
+      // {
+      //   path: 'wordManage',
+      //   name: 'WordManage',
+      //   component: () => import('@/views/songbook/wordManage/index'),
+      //   meta: { title: '词管理', icon: 'table' }
+      // }
     ]
   }
 
