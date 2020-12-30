@@ -3,12 +3,18 @@
  * @version:
  * @Author: jwj
  * @Date: 2020-12-26 16:15:26
- * @LastEditors: jwj
- * @LastEditTime: 2020-12-26 17:11:24
+ * @LastEditors: JWJ
+ * @LastEditTime: 2020-12-30 18:31:55
 -->
 <template>
   <div class="main-body">
     <div class="main-content">
+      <el-tabs v-model="tabActiveName">
+        <el-tab-pane label="词曲" name="1"></el-tab-pane>
+        <el-tab-pane label="作曲" name="3"></el-tab-pane>
+        <el-tab-pane label="作词" name="4"></el-tab-pane>
+        <el-tab-pane label="Beat/BGM" name="2"></el-tab-pane>
+      </el-tabs>
       <el-form ref="queryForm" label-width="100px" :model="queryForm" :inline="true">
         <div class="query-item">
           <div class="left-query">
@@ -37,10 +43,20 @@
             stripe
             style="width: 100%"
           >
-            <el-table-column prop="title" min-width="150" label="作品名"></el-table-column>
-            <el-table-column prop="creator" min-width="150" label="上传人"></el-table-column>
-            <el-table-column prop="createdTime" min-width="150" label="上传时间"></el-table-column>
-            <el-table-column prop="statusDesc" min-width="80" label="状态"></el-table-column>
+            <el-table-column type="index" width="50" label="序号"></el-table-column>
+            <el-table-column prop="title" min-width="150" label="名称"></el-table-column>
+            <el-table-column prop="creator" min-width="150" label="作品标签">
+              <template slot-scope="scope">
+                <span>{{ scope.row.stypeTagsDesc }}</span>
+                <span>{{ scope.row.emotionTagsDesc }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="composers" min-width="150" label="曲作者"></el-table-column>
+            <el-table-column prop="lyricists" min-width="150" label="词作者"></el-table-column>
+            <el-table-column prop="createdUserName" min-width="150" label="上传者"></el-table-column>
+            <el-table-column prop="price" min-width="150" label="报价"></el-table-column>
+            <el-table-column prop="createdTime" min-width="150" label="发布日期"></el-table-column>
+            <!-- <el-table-column prop="statusDesc" min-width="80" label="状态"></el-table-column> -->
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="openDetails(scope.row)">详情</el-button>
@@ -108,6 +124,7 @@ export default {
   data() {
     return {
       total: 0,
+      tabActiveName: '1',
       // 默认弹窗对象
       dialogOption: {
         title: '',
@@ -126,6 +143,12 @@ export default {
       form: {}
     }
   },
+  watch: {
+    tabActiveName() {
+      this.resetForm('queryForm')
+      this.getDataList()
+    }
+  },
   created() {
     this.getDataList()
   },
@@ -133,7 +156,9 @@ export default {
     // 查询列表
     getDataList() {
       this.loading = true
-      getDataList(this.queryForm).then(res => {
+      let json = JSON.parse(JSON.stringify(this.queryForm))
+      json.optionalType = this.tabActiveName
+      getDataList(json).then(res => {
         this.dataList = res.data || []
         this.total = res.count || 0
         this.loading = false
