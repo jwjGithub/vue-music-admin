@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2020-12-26 16:17:49
  * @LastEditors: jwj
- * @LastEditTime: 2020-12-30 21:28:58
+ * @LastEditTime: 2020-12-31 17:28:38
 -->
 <template>
   <div class="main-body">
@@ -23,10 +23,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="生效时间">
-              <el-date-picker v-model="queryForm.effectiveTime" type="date" class="w24"></el-date-picker>
+              <el-date-picker v-model="queryForm.effectiveTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             </el-form-item>
             <el-form-item label="失效时间">
-              <el-date-picker v-model="queryForm.expiredTime" type="date" class="w24"></el-date-picker>
+              <el-date-picker v-model="queryForm.expiredTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             </el-form-item>
           </div>
           <div class="right-btn">
@@ -59,13 +59,12 @@
             <el-table-column prop="effectiveTime" min-width="150" label="生效时间"></el-table-column>
             <el-table-column prop="expiredTime" min-width="150" label="失效时间"></el-table-column>
             <el-table-column prop="statusDesc" min-width="80" label="状态"></el-table-column>
-            <!-- <el-table-column label="操作" fixed="right" width="180">
+            <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="openDetails(scope.row)">详情</el-button>
-                <el-button size="mini" type="text" @click="getOffShelf(scope.row)">下架</el-button>
-                <el-button size="mini" type="text" class="c-red" @click="openDelete(scope.row)">删除</el-button>
+                <el-button size="mini" type="text" @click="openEdit(scope.row)">编辑</el-button>
+                <el-button size="mini" type="text" class="c-red" @click="openDelete(scope.row,1)">删除</el-button>
               </template>
-            </el-table-column> -->
+            </el-table-column>
           </el-table>
         </el-col>
       </el-row>
@@ -102,6 +101,7 @@
               placeholder="请选择"
               default-time="23:59:59"
               value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerTodayDateAfter"
             >
             </el-date-picker>
           </el-form-item>
@@ -113,6 +113,7 @@
               placeholder="请选择"
               default-time="23:59:59"
               value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerTodayDateAfter"
             >
             </el-date-picker>
           </el-form-item>
@@ -124,8 +125,8 @@
           </el-form-item>
           <el-form-item label="上架状态：">
             <el-select v-model="form.status" clearable placeholder="请选择状态" class="w24">
-              <el-option label="上架" value="1" />
-              <el-option label="下架" value="0" />
+              <el-option label="上架" :value="1" />
+              <el-option label="下架" :value="0" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -136,6 +137,7 @@
 <script>
 import {
   getDataList,
+  saveEditAndAdd,
   saveDelete
 } from '@/api/songbook/banner'
 export default {
@@ -183,6 +185,11 @@ export default {
         expiredTime: [
           { required: true, message: '请选择失效时间', trigger: ['blur', 'change'] }
         ]
+      },
+      pickerTodayDateAfter: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7 // 如果当天禁用，就不用减8.64e7
+        }
       }
     }
   },
@@ -201,7 +208,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.selectOption.ids = selection.map(item => item.userId)
+      this.selectOption.ids = selection.map(item => item.id)
       this.selectOption.single = selection.length !== 1
       this.selectOption.multiple = !selection.length
     },
@@ -214,16 +221,6 @@ export default {
         }
       })
       return arr.join(',')
-    },
-    // 打开详情接口
-    openDetails(row) {
-      // this.dialogOption = {
-      //   title: '详情',
-      //   show: true,
-      //   loading: false
-      // }
-      // this.form = row
-      // this.resetForm('form')
     },
     // 打开新增
     openAdd() {
@@ -240,41 +237,58 @@ export default {
         expiredTime: '', // 失效时间
         ref: '', // 链接
         sort: '', // 顺序排序，默认是0
-        status: '1'// 上架状态 0下架 1上架 默认是1
+        status: 1 // 上架状态 0下架 1上架 默认是1
       }
+      this.resetForm('form')
+    },
+    // 保存新增/编辑
+    saveEditAndAdd() {
+      this.dialogOption.loading = true
+      saveEditAndAdd(this.form).then(res => {
+        this.$notify.success({ title: '保存成功' })
+        this.getDataList()
+        this.dialogOption.show = false
+        this.dialogOption.loading = false
+      }).catch(e => {
+        this.dialogOption.loading = false
+      })
+    },
+    // 打开编辑
+    openEdit(row) {
+      this.dialogOption = {
+        title: '编辑banner配置',
+        show: true,
+        loading: false
+      }
+      this.form = JSON.parse(JSON.stringify(row))
       this.resetForm('form')
     },
     // 保存回调
     handleConfirm() {
-      // this.$refs['form'].validate((valid) => {
-      //   if (valid) {
-      //     if (this.form.userId) {
-      //       this.saveEdit()
-      //     } else {
-      //       this.saveAdd()
-      //     }
-      //   } else {
-      //     return false
-      //   }
-      // })
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.saveEditAndAdd()
+        } else {
+          return false
+        }
+      })
     },
     // 删除
     openDelete(row, type) {
-      // this.$confirm('此操作将删除作品, 是否继续?', '作品删除', {
-      //   cancelButtonText: '取消',
-      //   confirmButtonText: '确定',
-      //   type: 'warning'
-      // }).then(() => {
-      //   let json = {
-      //     id: row.id, // 作品ID
-      //     status: '-1', // 作品状态 0未发布 1已发布 -1已删除
-      //     postStatus: ''// 出售状态 0未出售 1已出售 2交易中 3已下架
-      //   }
-      //   saveDelete(json).then(res => {
-      //     this.$notify.success({ title: '操作成功' })
-      //     this.getDataList()
-      //   })
-      // }).catch(() => {})
+      let title = type === 1 ? '单个' : '批量'
+      this.$confirm(`此操作将${title}删除作品, 是否继续?`, '作品删除', {
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+        type: 'warning'
+      }).then(() => {
+        let json = {
+          ids: type === 1 ? row.id : this.selectOption.ids
+        }
+        saveDelete(json).then(res => {
+          this.$notify.success({ title: '操作成功' })
+          this.getDataList()
+        })
+      }).catch(() => {})
     }
   }
 }

@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2020-12-26 16:30:42
  * @LastEditors: jwj
- * @LastEditTime: 2020-12-30 20:57:12
+ * @LastEditTime: 2020-12-31 17:03:11
  */
 import request from '@/utils/request'
 
@@ -16,10 +16,18 @@ export function getDataList(data) {
     data: data
   })
 }
-// 修改作品状态
+// 新增、修改banner配置
+export function saveEditAndAdd(data) {
+  return request({
+    url: '/sys/banner/addUpdate',
+    method: 'post',
+    data: data
+  })
+}
+// 删除banner配置
 export function saveDelete(data) {
   return request({
-    url: '/work/updateWork',
+    url: '/sys/banner/delete',
     method: 'post',
     data: data
   })

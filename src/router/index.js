@@ -371,13 +371,13 @@ export const constantRoutes = [
         name: 'Banner',
         component: () => import('@/views/songbook/banner/index'),
         meta: { title: 'banner配置', icon: 'table' }
+      },
+      {
+        path: 'recommend',
+        name: 'Recommend',
+        component: () => import('@/views/songbook/recommend/index'),
+        meta: { title: '精品推荐', icon: 'table' }
       }
-      // {
-      //   path: 'wordManage',
-      //   name: 'WordManage',
-      //   component: () => import('@/views/songbook/wordManage/index'),
-      //   meta: { title: '词管理', icon: 'table' }
-      // }
     ]
   }
 
