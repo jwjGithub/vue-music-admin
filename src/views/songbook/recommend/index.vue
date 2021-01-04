@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2020-12-26 16:17:49
- * @LastEditors: jwj
- * @LastEditTime: 2021-01-03 20:07:17
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-01-04 11:15:38
 -->
 <template>
   <div class="main-body">
@@ -46,6 +46,7 @@
               <template slot-scope="scope">{{ scope.$index + 1 }}</template>
             </el-table-column>
             <el-table-column prop="title" min-width="150" label="名称"></el-table-column>
+            <!-- <el-table-column prop="fineWorkStatusDesc" min-width="80" label="状态"></el-table-column> -->
             <el-table-column prop="tags" min-width="150" label="作品标签"></el-table-column>
             <el-table-column prop="statusDesc" min-width="150" label="曲作者"></el-table-column>
             <el-table-column prop="statusDesc" min-width="150" label="词作者"></el-table-column>
@@ -55,7 +56,7 @@
             <el-table-column prop="createdTime" min-width="160" label="申请时间"></el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="openExamine(scope.row)">审核</el-button>
+                <el-button size="mini" type="text" @click="openExamine(scope.row)">详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -132,6 +133,19 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row v-if="form.status == 0">
+            <el-col :span="24">
+              <el-form-item label="审批意见：" prop="auditOpinions">
+                <el-input v-model="form.auditOpinions" style="width:600px;" type="textarea" :rows="4" :resize="'none'"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label=" ">
+                <el-button type="primary" class="w14 mt24 mr24" @click="handleConfirm(1)">通过</el-button>
+                <el-button type="danger" class="w14 mt24 mr24" @click="handleConfirm(2)">拒绝</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </div>
     </mus-dialog>
@@ -195,8 +209,51 @@ export default {
         show: true,
         loading: false
       }
-      this.form = row
+      this.form = JSON.parse(JSON.stringify(row))
       this.resetForm('form')
+    },
+    // 保存回调 1通过 2作废 3驳回
+    handleConfirm(type) {
+      let json = {
+        status: 0,
+        id: this.form.id,
+        auditRemarks: this.form.auditRemarks || ''
+      }
+      let title = ''
+      let message = ''
+      if (type === 1) {
+        json.status = 1
+        title = '审核通过'
+        message = '此操作将通过当前申请, 是否继续?'
+      }
+      if (type === 2) {
+        if (!this.form.auditRemarks) {
+          this.$message.error('请输入审批意见！')
+          return false
+        }
+        json.status = 2
+        title = '申请拒绝'
+        message = '此操作将拒绝当前申请, 是否继续?'
+      }
+      this.$confirm(message, title, {
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+        type: 'warning'
+      }).then(() => {
+        this.dialogOption.loading = true
+        saveExamine(json).then(res => {
+          this.$notify.success({
+            title: '操作成功'
+          })
+          this.getDataList()
+          this.dialogOption.show = false
+          this.dialogOption.loading = false
+        }).catch(() => {
+          this.dialogOption.loading = false
+        })
+      }).catch(() => {
+
+      })
     }
   }
 }

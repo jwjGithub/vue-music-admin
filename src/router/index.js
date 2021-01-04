@@ -352,34 +352,34 @@ export const constantRoutes = [
         meta: { title: '接口测试', icon: 'table' }
       }
     ]
-  },
-  {
-    path: '/songbook',
-    component: Layout,
-    redirect: '/songbook/songManage',
-    name: 'Songbook',
-    meta: { title: '曲库管理', icon: 'tree' },
-    children: [
-      {
-        path: 'songManage',
-        name: 'SongManage',
-        component: () => import('@/views/songbook/songManage/index'),
-        meta: { title: '作品管理', icon: 'table' }
-      },
-      {
-        path: 'banner',
-        name: 'Banner',
-        component: () => import('@/views/songbook/banner/index'),
-        meta: { title: 'banner配置', icon: 'table' }
-      },
-      {
-        path: 'recommend',
-        name: 'Recommend',
-        component: () => import('@/views/songbook/recommend/index'),
-        meta: { title: '精品推荐', icon: 'table' }
-      }
-    ]
   }
+  // {
+  //   path: '/songbook',
+  //   component: Layout,
+  //   redirect: '/songbook/songManage',
+  //   name: 'Songbook',
+  //   meta: { title: '曲库管理', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'songManage',
+  //       name: 'SongManage',
+  //       component: () => import('@/views/songbook/songManage/index'),
+  //       meta: { title: '作品管理', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'banner',
+  //       name: 'Banner',
+  //       component: () => import('@/views/songbook/banner/index'),
+  //       meta: { title: 'Banner配置', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'recommend',
+  //       name: 'Recommend',
+  //       component: () => import('@/views/songbook/recommend/index'),
+  //       meta: { title: '精品推荐', icon: 'table' }
+  //     }
+  //   ]
+  // }
 
   // 404 page must be placed at the end !!!
   // { path: '*', redirect: '/404', hidden: true }

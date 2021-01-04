@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2020-12-26 16:17:49
- * @LastEditors: jwj
- * @LastEditTime: 2020-12-31 17:28:38
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-01-04 11:01:43
 -->
 <template>
   <div class="main-body">
@@ -56,6 +56,16 @@
           >
             <el-table-column type="selection" width="55" align="center"></el-table-column>
             <el-table-column prop="title" min-width="150" label="标题"></el-table-column>
+            <el-table-column prop="url" width="250" label="图片">
+              <template slot-scope="scope">
+                <el-image
+                  style="width: 192px; height: 108px"
+                  :src="scope.row.url"
+                  :preview-src-list="[scope.row.url]"
+                >
+                </el-image>
+              </template>
+            </el-table-column>
             <el-table-column prop="effectiveTime" min-width="150" label="生效时间"></el-table-column>
             <el-table-column prop="expiredTime" min-width="150" label="失效时间"></el-table-column>
             <el-table-column prop="statusDesc" min-width="80" label="状态"></el-table-column>
@@ -87,11 +97,29 @@
     >
       <div class="pl24 pr24 pt24 pb24">
         <el-form ref="form" :model="form" :rules="rules" label-width="130px" :inline="true">
+          <el-row>
+            <el-col :span="24">
+              <el-form-item class="mb10" label="封面图：" prop="url">
+                <el-upload
+                  class="avatar-uploader w24"
+                  :headers="{token: getToken()}"
+                  :action="baseURL + '/company/signup/uploadImg'"
+                  accept="image/*"
+                  :before-upload="handleBeforeUpload"
+                  :show-file-list="false"
+                  :on-success="handleSuccess"
+                >
+                  <img v-if="form.url" :src="form.url" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item label="标题：" prop="title">
             <el-input v-model="form.title" class="w24"></el-input>
           </el-form-item>
-          <el-form-item label="url：" prop="url">
-            <el-input v-model="form.url" class="w24"></el-input>
+          <el-form-item label="链接：">
+            <el-input v-model="form.ref" class="w24"></el-input>
           </el-form-item>
           <el-form-item label="生效时间：" prop="effectiveTime">
             <el-date-picker
@@ -99,7 +127,7 @@
               class="w24"
               type="datetime"
               placeholder="请选择"
-              default-time="23:59:59"
+              default-time="00:00:00"
               value-format="yyyy-MM-dd HH:mm:ss"
               :picker-options="pickerTodayDateAfter"
             >
@@ -117,16 +145,13 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="链接：">
-            <el-input v-model="form.ref" class="w24"></el-input>
-          </el-form-item>
           <el-form-item label="排序：">
             <el-input-number v-model="form.sort" class="w24" controls-position="right" :min="1" :max="999999"></el-input-number>
           </el-form-item>
-          <el-form-item label="上架状态：">
-            <el-select v-model="form.status" clearable placeholder="请选择状态" class="w24">
-              <el-option label="上架" :value="1" />
-              <el-option label="下架" :value="0" />
+          <el-form-item label="状态：">
+            <el-select v-model="form.status" placeholder="请选择状态" class="w24">
+              <el-option label="生效" :value="1" />
+              <el-option label="失效" :value="0" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -289,6 +314,23 @@ export default {
           this.getDataList()
         })
       }).catch(() => {})
+    },
+    // 选择文件回调
+    handleBeforeUpload(file) {
+      const reg = '.*\\.(jpg|png|gif|JPG|PNG|GIF)'
+      if (file.name.match(reg) == null) {
+        this.$notify.error({ title: '对不起，上传格式不正确，请重新上传' })
+        return false
+      }
+      if (file.size > 1024 * 1024 * 10) {
+        this.$notify.error({ title: '对不起，文件不能大于10M，请重新上传' })
+        return false
+      }
+      return true
+    },
+    // 上传成功回调
+    handleSuccess(res, file, fileList) {
+      this.$set(this.form, 'url', res.data.url)
     }
   }
 }
@@ -308,14 +350,15 @@ export default {
       .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 100px;
-        height: 100px;
+        width: 192px;
+        height: 108px;
         line-height: 100px;
         text-align: center;
+        border: 1px dashed #d9d9d9;
       }
       .avatar {
-        width: 100px;
-        height: 100px;
+        width: 192px;
+        height: 108px;
         display: block;
       }
     }
