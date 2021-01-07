@@ -209,30 +209,29 @@ export const constantRoutes = [
   //   ]
   // },
   {
-    path: '/example1',
+    path: '/musician',
     component: Layout,
-    redirect: '/example1/table1',
-    name: 'Example',
-    meta: { title: '音乐人管理', icon: 'el-icon-s-help' },
+    redirect: '/musician/basicInfo',
+    meta: { title: '音乐人管理', icon: 'tree' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '音乐人信息', icon: 'table' }
+        path: 'basicInfo',
+        name: 'BasicInfo',
+        component: () => import('@/views/musician/basicInfo/index'),
+        meta: { title: '基本信息', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '账号状态', icon: 'tree' }
-      },
-      {
-        path: 'tree1',
-        name: 'Tree1',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '会员信息', icon: 'tree' }
+        path: 'memberInfo',
+        name: 'MemberInfo',
+        component: () => import('@/views/musician/memberInfo/index'),
+        meta: { title: '会员信息', icon: 'table' }
       }
+      // {
+      //   path: 'tree1',
+      //   name: 'Tree1',
+      //   component: () => import('@/views/tree/index'),
+      //   meta: { title: '会员信息', icon: 'tree' }
+      // }
     ]
   },
   {

@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2020-12-26 16:15:26
  * @LastEditors: jwj
- * @LastEditTime: 2020-12-30 20:45:29
+ * @LastEditTime: 2021-01-07 22:17:31
 -->
 <template>
   <div class="main-body">
@@ -80,6 +80,7 @@
                 <el-button size="mini" type="text" @click="openDetails(scope.row)">详情</el-button>
                 <!-- <el-button v-if="scope.row.status == 0" size="mini" type="text" @click="getUpShelf(scope.row)">上架</el-button> -->
                 <el-button v-if="scope.row.status != 3" size="mini" type="text" @click="getOffShelf(scope.row,3)">下架</el-button>
+                <el-button v-else size="mini" type="text" :disabled="true">已下架</el-button>
                 <el-button size="mini" type="text" class="c-red" @click="openDelete(scope.row)">删除</el-button>
               </template>
             </el-table-column>
