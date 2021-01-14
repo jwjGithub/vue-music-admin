@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2021-01-07 18:29:47
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-01-13 20:44:58
+ * @LastEditTime: 2021-01-14 22:11:34
  */
 import request from '@/utils/request'
 
@@ -20,6 +20,14 @@ export function getList(data) {
 export function getMusicianDetail(data) {
   return request({
     url: '/musician/message/getMusicianDetail',
+    method: 'post',
+    data: data
+  })
+}
+// 工种
+export function getProfessionSelect(data) {
+  return request({
+    url: '/musician/message/getProfessionSelect',
     method: 'post',
     data: data
   })

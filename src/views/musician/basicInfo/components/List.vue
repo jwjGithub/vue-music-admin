@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2021-01-07 18:33:28
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-01-13 21:07:17
+ * @LastEditTime: 2021-01-14 22:33:18
 -->
 <template>
   <div class="main-page">
@@ -86,14 +86,116 @@
     </div>
     <!-- 新增/修改 弹窗 -->
     <mus-dialog
-      :title="dialogOption.title"
-      :loading="dialogOption.loading"
-      :is-show="dialogOption.show"
-      :width="'860px'"
-      @handleClose="dialogOption.show = false"
+      :title="dialogEdit.title"
+      :loading="dialogEdit.loading"
+      :is-show="dialogEdit.show"
+      :width="'1300px'"
+      @handleClose="dialogEdit.show = false"
     >
       <div class="pl24 pr24 pt24 pb24">
-        修改
+        <el-form ref="editForm" :model="editForm" label-width="130px" :inline="true">
+          <el-row :gutter="30">
+            <!-- 左边 -->
+            <el-col :span="12">
+              <el-row>
+                <el-col :span="24">
+                  <h3>基本信息</h3>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="艺名：">
+                    <el-input v-model="editForm.stageName" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="工种：">
+                    <el-select v-model="editForm.professionArray" multiple clearable placeholder="请选择工种" class="w24">
+                      <el-option value="" label="全部" />
+                      <el-option v-for="(item,index) in professionList" :key="index" :value="item.code" :label="item.des" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="头像：">
+                    <el-input v-model="editForm.profile" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="个人简介：">
+                    <div class="h25 w45">
+                      <Editor v-model="editForm.introduction" style="width:100%;" />
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <h3>实名信息</h3>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="身份证正反面：">
+                    <el-input v-model="editForm.front" class="w24"></el-input>
+                    <el-input v-model="editForm.back" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-col>
+            <!-- 右边 -->
+            <el-col :span="12">
+              <el-row>
+                <el-col :span="24">
+                  <h3>账号信息</h3>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="用户名：">
+                    <el-input v-model="editForm.username" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="密码：">
+                    <el-input v-model="editForm.password" type="password" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="手机号：">
+                    <el-input v-model="editForm.mobile" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="邮箱：">
+                    <el-input v-model="editForm.email" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="注册时间：">
+                    <el-date-picker v-model="editForm.createTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="账号状态：">
+                    <el-select v-model="editForm.status" clearable placeholder="请选择状态" class="w24">
+                      <el-option value="" label="全部" />
+                      <el-option :value="0" label="正常" />
+                      <el-option :value="1" label="停用" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="封禁时间：">
+                    <el-date-picker v-model="editForm.banTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="解禁时间：">
+                    <el-date-picker v-model="editForm.unsealTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="封号原因：">
+                    <el-input v-model="editForm.banReason" class="w24"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+        </el-form>
       </div>
     </mus-dialog>
     <!-- 详情 弹窗 -->
@@ -103,15 +205,18 @@
       :is-show="dialogOption.show"
       :is-show-ok="false"
       :is-show-close="false"
-      :width="'1100px'"
+      :width="'1300px'"
       @handleClose="dialogOption.show = false"
     >
       <div class="pl24 pr24 pt24 pb24">
         <el-form ref="form" :model="form" label-width="130px" :inline="true">
-          <el-row>
+          <el-row :gutter="30">
+            <!-- 左边 -->
             <el-col :span="12">
-              <h3>基本信息</h3>
               <el-row>
+                <el-col :span="24">
+                  <h3>基本信息</h3>
+                </el-col>
                 <el-col :span="12">
                   <el-form-item class="mb1" label="真实姓名：">
                     <div>{{ form.base && form.base.realname }}</div>
@@ -123,37 +228,81 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
-                  <el-form-item class="mb1" label="头像：">
-                    <div>
-                      <img :src="form.base && form.base.profileUrl">
-                    </div>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="24">
                   <el-form-item class="mb1" label="工种：">
                     <div>{{ form.base && form.base.professionArrayDesc.join(',') }}</div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
+                  <el-form-item class="mb1" label="头像：">
+                    <div class="w10 h10">
+                      <img class="w100 h100" :src="form.base && form.base.profileUrl">
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
                   <el-form-item class="mb1" label="个人简介：">
-                    <div>{{ form.base && form.base.introduction }}</div>
+                    <div v-html="form.base && form.base.introduction"></div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <h3>实名信息</h3>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item class="mb1" label="真身份证号：">
+                    <div>{{ form.idMessage && form.idMessage.url }}没有该字段</div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item class="mb1" label="身份证正反面：">
+                    <div class="w10 h10">
+                      <img class="w100 h100" :src="form.idMessage && form.idMessage.frontUrl">
+                    </div>
+                    <div class="w10 h10">
+                      <img class="w100 h100" :src="form.idMessage && form.idMessage.backUrl">
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <h3>账户信息</h3>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item class="mb1" label="资产余额：">
+                    <div>{{ form.base && form.base.title }}</div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item class="mb1" label="积分余额：">
+                    <div>{{ form.base && form.base.title }}</div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item class="mb1" label="绑定支付宝账号：">
+                    <div>{{ form.base && form.base.title }}</div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item class="mb1" label="绑定银行卡账号：">
+                    <div>{{ form.base && form.base.title }}</div>
                   </el-form-item>
                 </el-col>
               </el-row>
             </el-col>
+            <!-- 右边 -->
             <el-col :span="12">
-              <h3>账号信息</h3>
               <el-row>
+                <el-col :span="24">
+                  <h3>账号信息</h3>
+                </el-col>
                 <el-col :span="12">
                   <el-form-item class="mb1" label="用户名：">
                     <div>{{ form.account && form.account.username }}</div>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <!-- <el-col :span="12">
                   <el-form-item class="mb1" label="密码：">
                     <div>{{ form.account && form.account.password }}</div>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :span="12">
                   <el-form-item class="mb1" label="手机号：">
                     <div>{{ form.account && form.account.mobile }}</div>
@@ -189,29 +338,9 @@
                     <div>{{ form.account && form.account.banReason }}</div>
                   </el-form-item>
                 </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="12">
-              <h3>实名信息</h3>
-              <el-row>
                 <el-col :span="24">
-                  <el-form-item class="mb1" label="真身份证号：">
-                    <div>{{ form.idMessage && form.idMessage.url }}没有该字段</div>
-                  </el-form-item>
+                  <h3>作品信息</h3>
                 </el-col>
-                <el-col :span="24">
-                  <el-form-item class="mb1" label="身份证正反面：">
-                    <div>
-                      <img :src="form.idMessage && form.idMessage.frontUrl">
-                      <img :src="form.idMessage && form.idMessage.backUrl">
-                    </div>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="12">
-              <h3>作品信息</h3>
-              <el-row>
                 <el-col :span="12">
                   <el-form-item class="mb1" label="全部作品：">
                     <div>{{ form.workMessage && form.workMessage.allNum }}首</div>
@@ -247,36 +376,9 @@
                     <div>{{ form.workMessage && form.workMessage.deleteNum }}首</div>
                   </el-form-item>
                 </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="12">
-              <h3>账户信息</h3>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item class="mb1" label="资产余额：">
-                    <div>{{ form.base && form.base.title }}</div>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item class="mb1" label="积分余额：">
-                    <div>{{ form.base && form.base.title }}</div>
-                  </el-form-item>
-                </el-col>
                 <el-col :span="24">
-                  <el-form-item class="mb1" label="绑定支付宝账号：">
-                    <div>{{ form.base && form.base.title }}</div>
-                  </el-form-item>
+                  <h3>推广信息</h3>
                 </el-col>
-                <el-col :span="24">
-                  <el-form-item class="mb1" label="绑定银行卡账号：">
-                    <div>{{ form.base && form.base.title }}</div>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="12">
-              <h3>推广信息</h3>
-              <el-row>
                 <el-col :span="12">
                   <el-form-item class="mb1" label="精品推荐：">
                     <div>{{ form.spreadMessage && form.spreadMessage.spreadNum }}首</div>
@@ -298,15 +400,18 @@
 <script>
 import {
   getList,
-  getMusicianDetail
+  getMusicianDetail,
+  getProfessionSelect
 //   saveAdd,
 //   saveEdit,
 //   saveDelete,
 //   getUserUnderCom
 } from '@/api/musician/basicInfo/list'
+import Editor from '@/components/Editor'
 export default {
   name: 'List',
   components: {
+    Editor
   },
   data() {
     return {
@@ -338,7 +443,14 @@ export default {
         show: false,
         loading: false
       },
-      form: {}
+      dialogEdit: {
+        title: '',
+        show: false,
+        loading: false
+      },
+      form: {},
+      editForm: {},
+      professionList: []// 工种列表
       // rules: {
       //   baseName: [
       //     { required: true, message: '请输入自选库名称', trigger: 'blur' }
@@ -348,6 +460,9 @@ export default {
   },
   created() {
     this.getList()
+    getProfessionSelect().then(res => {
+      this.professionList = res.data || []
+    })
   },
   methods: {
     // 查询列表
@@ -376,7 +491,34 @@ export default {
       this.$emit('addTab', json)
     },
     // 打开编辑
-    openEdit(row) {},
+    openEdit(row) {
+      this.dialogEdit = {
+        title: '编辑',
+        show: true,
+        loading: false
+      }
+      getMusicianDetail({ userId: row.userId }).then(res => {
+        let info = res.data || {}
+        this.editForm = {
+          id: info?.base?.userId, // 用户id
+          username: info?.account?.username, // 用户账号
+          password: info?.account?.password, // 用户密码
+          mobile: info?.account?.mobile, // 用户手机
+          email: info?.account?.email, // 用户邮箱
+          createTime: info?.account?.registerTime, // 注册时间
+          status: info?.account?.status, // 用户状态 0正常 1停用 -1删除
+          banTime: info?.account?.banTime, // 封禁时间
+          unsealTime: info?.account?.unsealTime, // 解禁时间
+          banReason: info?.account?.banReason, // 封号原因
+          profile: info?.base?.profileUrl, // 用户头像，传上传图片接口返回的ID
+          stageName: info?.base?.stageName, // 音乐人艺名
+          professionArray: info?.base?.professionArray.map(String), // 音乐人工种数组
+          introduction: info?.base?.introduction, // 音乐人简介
+          front: info?.idMessage?.frontUrl, // 身份证正面图片
+          back: info?.idMessage?.backUrl// 身份证反面图片
+        }
+      })
+    },
     // 打开详情
     openDetails(row) {
       this.dialogOption = {
