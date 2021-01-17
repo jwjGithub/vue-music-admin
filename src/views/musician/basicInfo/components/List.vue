@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2021-01-07 18:33:28
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-01-14 22:33:18
+ * @LastEditTime: 2021-01-17 21:29:23
 -->
 <template>
   <div class="main-page">
@@ -91,6 +91,7 @@
       :is-show="dialogEdit.show"
       :width="'1300px'"
       @handleClose="dialogEdit.show = false"
+      @handleConfirm="handleConfirm"
     >
       <div class="pl24 pr24 pt24 pb24">
         <el-form ref="editForm" :model="editForm" label-width="130px" :inline="true">
@@ -116,7 +117,18 @@
                 </el-col>
                 <el-col :span="24">
                   <el-form-item label="头像：">
-                    <el-input v-model="editForm.profile" class="w24"></el-input>
+                    <el-upload
+                      class="avatar-uploader w24"
+                      :headers="{token: getToken()}"
+                      :action="baseURL + '/company/signup/uploadImg'"
+                      accept="image/*"
+                      :before-upload="handleBeforeUpload"
+                      :show-file-list="false"
+                      :on-success="handleSuccess"
+                    >
+                      <img v-if="editForm.profileUrl" :src="editForm.profileUrl" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -130,11 +142,47 @@
                   <h3>实名信息</h3>
                 </el-col>
                 <el-col :span="24">
+                  <el-form-item label="身份证正面：" prop="front">
+                    <el-upload
+                      class="avatar-uploader w24"
+                      action="#"
+                      accept="image/*"
+                      :before-upload="handleBeforeUpload"
+                      :show-file-list="false"
+                      :auto-upload="false"
+                      :limit="1"
+                      :on-exceed="(res)=>{handleExceed(res,'front')}"
+                      :on-change="(res)=>{handleUpdate(res,'front')}"
+                    >
+                      <img v-if="editForm.front" :src="editForm.front" class="avatar musician  w19 h13">
+                      <i v-else class="el-icon-plus avatar-uploader-icon musician  w19 h13" style="line-height:130px;"></i>
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="身份证反面：" prop="back">
+                    <el-upload
+                      class="avatar-uploader w24"
+                      action="#"
+                      accept="image/*"
+                      :before-upload="handleBeforeUpload"
+                      :show-file-list="false"
+                      :auto-upload="false"
+                      :limit="1"
+                      :on-exceed="(res)=>{handleExceed(res,'back')}"
+                      :on-change="(res)=>{handleUpdate(res,'back')}"
+                    >
+                      <img v-if="editForm.back" :src="editForm.back" class="avatar musician  w19 h13">
+                      <i v-else class="el-icon-plus avatar-uploader-icon musician w19 h13" style="line-height:130px;"></i>
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
+                <!-- <el-col :span="24">
                   <el-form-item label="身份证正反面：">
                     <el-input v-model="editForm.front" class="w24"></el-input>
                     <el-input v-model="editForm.back" class="w24"></el-input>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
               </el-row>
             </el-col>
             <!-- 右边 -->
@@ -189,7 +237,7 @@
                 </el-col>
                 <el-col :span="24">
                   <el-form-item label="封号原因：">
-                    <el-input v-model="editForm.banReason" class="w24"></el-input>
+                    <el-input v-model="editForm.banReason" type="textarea" :rows="3" class="w24"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -248,15 +296,19 @@
                   <h3>实名信息</h3>
                 </el-col>
                 <el-col :span="24">
-                  <el-form-item class="mb1" label="真身份证号：">
+                  <el-form-item class="mb1" label="身份证号：">
                     <div>{{ form.idMessage && form.idMessage.url }}没有该字段</div>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
-                  <el-form-item class="mb1" label="身份证正反面：">
+                <el-col :span="12">
+                  <el-form-item class="mb1" label="身份证正面：">
                     <div class="w10 h10">
                       <img class="w100 h100" :src="form.idMessage && form.idMessage.frontUrl">
                     </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item class="mb1" label="身份证反面：">
                     <div class="w10 h10">
                       <img class="w100 h100" :src="form.idMessage && form.idMessage.backUrl">
                     </div>
@@ -401,13 +453,14 @@
 import {
   getList,
   getMusicianDetail,
-  getProfessionSelect
-//   saveAdd,
-//   saveEdit,
+  getProfessionSelect,
+  //   saveAdd,
+  saveEdit
 //   saveDelete,
 //   getUserUnderCom
 } from '@/api/musician/basicInfo/list'
 import Editor from '@/components/Editor'
+import { saveAdd } from '@/api/description'
 export default {
   name: 'List',
   components: {
@@ -481,11 +534,11 @@ export default {
     openName(row) {
       let form = {
         id: row.userId,
-        name: `${row.username}(${row.realname})`
+        name: `${row.stageName}(${row.realname})`
         // createdTime: row.createdTime,
       }
       let json = {
-        title: `${row.username}(${row.realname})`,
+        title: `${row.stageName}(${row.realname})`,
         form: form
       }
       this.$emit('addTab', json)
@@ -510,12 +563,49 @@ export default {
           banTime: info?.account?.banTime, // 封禁时间
           unsealTime: info?.account?.unsealTime, // 解禁时间
           banReason: info?.account?.banReason, // 封号原因
-          profile: info?.base?.profileUrl, // 用户头像，传上传图片接口返回的ID
-          stageName: info?.base?.stageName, // 音乐人艺名
+          profile: info?.base?.profile, // 用户头像，传上传图片接口返回的ID
+          profileUrl: info?.base?.profileUrl, // 用户头像，传上传图片接口返回的ID
+          stageName: info?.base?.stageName || '', // 音乐人艺名
           professionArray: info?.base?.professionArray.map(String), // 音乐人工种数组
           introduction: info?.base?.introduction, // 音乐人简介
           front: info?.idMessage?.frontUrl, // 身份证正面图片
           back: info?.idMessage?.backUrl// 身份证反面图片
+        }
+      })
+    },
+    // 保存回调
+    handleConfirm() {
+      this.$refs['editForm'].validate((valid) => {
+        if (valid) {
+          let formData = new FormData()
+          formData.append('id', this.editForm.id)
+          formData.append('username', this.editForm.username || '')
+          formData.append('password', this.editForm.password || '')
+          formData.append('mobile', this.editForm.mobile || '')
+          formData.append('email', this.editForm.email || '')
+          formData.append('createTime', this.editForm.createTime || '')
+          formData.append('status', this.editForm.status || '')
+          formData.append('banTime', this.editForm.banTime || '')
+          formData.append('unsealTime', this.editForm.unsealTime || '')
+          formData.append('banReason', this.editForm.banReason || '')
+          formData.append('profile', this.editForm.profile || '')
+          formData.append('profileUrl', this.editForm.profileUrl || '')
+          formData.append('stageName', this.editForm.stageName || '')
+          formData.append('professionArray', this.editForm.professionArray || '')
+          formData.append('introduction', this.editForm.introduction || '')
+          formData.append('front', this.editForm.front || '')
+          formData.append('back', this.editForm.back || '')
+          this.dialogEdit.loading = true
+          saveEdit(formData).then(res => {
+            this.$notify.success({ title: '保存成功' })
+            this.getList()
+            this.dialogEdit.show = false
+            this.dialogEdit.loading = false
+          }).catch(e => {
+            this.dialogEdit.loading = false
+          })
+        } else {
+          return false
         }
       })
     },
@@ -529,6 +619,61 @@ export default {
       getMusicianDetail({ userId: row.userId }).then(res => {
         this.form = res.data || {}
       })
+    },
+    // 选择文件回调
+    handleBeforeUpload(file) {
+      const reg = '.*\\.(jpg|png|gif|JPG|PNG|GIF)'
+      if (file.name.match(reg) == null) {
+        this.$notify.error({ title: '对不起，上传格式不正确，请重新上传' })
+        return false
+      }
+      if (file.size > 1024 * 1024 * 10) {
+        this.$notify.error({ title: '对不起，文件不能大于10M，请重新上传' })
+        return false
+      }
+      return true
+    },
+    // 上传成功回调
+    handleSuccess(res, file, fileList) {
+      this.$set(this.editForm, 'profileUrl', res.data.url)
+      this.$set(this.editForm, 'profile', res.data.id)
+    },
+    // 超出限制上传
+    handleExceed(res, name) {
+      let reader = new FileReader() // 实例化文件读取对象
+      reader.readAsDataURL(res[0]) // 将文件读取为 DataURL,也就是base64编码
+      reader.onload = (ev) => { // 文件读取成功完成时触发
+        if (name === 'front') {
+          this.editForm.front = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
+        } else {
+          this.editForm.back = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
+        }
+      }
+      // if (window.registerFormData.has(name)) {
+      //   window.registerFormData.delete(name)
+      //   window.registerFormData.append(name, res[0])
+      // } else {
+      //   window.registerFormData.append(name, res[0])
+      // }
+    },
+    // 默认上传
+    handleUpdate(res, name) {
+      let reader = new FileReader() // 实例化文件读取对象
+      reader.readAsDataURL(res.raw) // 将文件读取为 DataURL,也就是base64编码
+      reader.onload = (ev) => { // 文件读取成功完成时触发
+        if (name === 'front') {
+          this.editForm.front = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
+        } else {
+          this.editForm.back = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
+        }
+      }
+      // if (window.registerFormData.has(name)) {
+      //   window.registerFormData.delete(name)
+      //   window.registerFormData.append(name, res.raw)
+      // } else {
+      //   window.registerFormData.append(name, res.raw)
+      // }
+      // this.form[name] = name
     }
   }
 }
@@ -579,6 +724,33 @@ export default {
       >.lists{
         width:100%;
         height:100%;
+      }
+    }
+  }
+  // 头像上传样式
+  .avatar-uploader{
+    text-align: left;
+    .el-upload {
+      border: 1px dashed #d9d9d9;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      // &:hover {
+      //   border-color: #409EFF;
+      // }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 108px;
+        height: 108px;
+        line-height: 100px;
+        text-align: center;
+        border: 1px dashed #d9d9d9;
+      }
+      .avatar {
+        width: 108px;
+        height: 108px;
+        display: block;
       }
     }
   }

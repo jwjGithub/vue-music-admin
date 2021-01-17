@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2021-01-07 18:16:12
- * @LastEditors: jwj
- * @LastEditTime: 2021-01-07 18:37:58
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-01-17 20:59:47
 -->
 <template>
   <div class="main-page musician-basicInfo">
@@ -26,7 +26,7 @@
           :name="item.name"
           :closable="true"
         >
-          <Details :form="item.form"></Details>
+          <Details :list-data="item.form"></Details>
         </el-tab-pane>
       </el-tabs>
     </div>
