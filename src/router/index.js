@@ -208,32 +208,26 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/musician',
-    component: Layout,
-    redirect: '/musician/basicInfo',
-    meta: { title: '音乐人管理', icon: 'tree' },
-    children: [
-      {
-        path: 'basicInfo',
-        name: 'BasicInfo',
-        component: () => import('@/views/musician/basicInfo/index'),
-        meta: { title: '基本信息', icon: 'table' }
-      },
-      {
-        path: 'memberInfo',
-        name: 'MemberInfo',
-        component: () => import('@/views/musician/memberInfo/index'),
-        meta: { title: '会员信息', icon: 'table' }
-      }
-      // {
-      //   path: 'tree1',
-      //   name: 'Tree1',
-      //   component: () => import('@/views/tree/index'),
-      //   meta: { title: '会员信息', icon: 'tree' }
-      // }
-    ]
-  },
+  // {
+  //   path: '/musician',
+  //   component: Layout,
+  //   redirect: '/musician/basicInfo',
+  //   meta: { title: '音乐人管理', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'basicInfo',
+  //       name: 'BasicInfo',
+  //       component: () => import('@/views/musician/basicInfo/index'),
+  //       meta: { title: '基本信息', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'memberInfo',
+  //       name: 'MemberInfo',
+  //       component: () => import('@/views/musician/memberInfo/index'),
+  //       meta: { title: '会员信息', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example2',
     component: Layout,
