@@ -204,7 +204,7 @@ import {
   addTemplateOption,
   deleteMsgTemplateOption,
   updateTemplateOption
-} from '@/api/msg/msg'
+} from '@/api/msg/template'
 export default {
   name: 'Template',
   data() {
@@ -468,7 +468,7 @@ export default {
         method: res.method,
         seq: res.seq,
         params: res.params,
-        description: res.description,
+        description: res.description
       }
       this.resetForm('operatingAddForm')
     },

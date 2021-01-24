@@ -4,50 +4,53 @@
       <el-form ref="queryForm" label-width="100px" :model="queryForm" :inline="true">
         <div class="query-item">
           <div class="left-query">
-            <el-form-item label="用户名称" prop="username">
-              <el-input v-model="queryForm.username" class="w24"></el-input>
+            <el-form-item label="模版标题" prop="title">
+              <el-input v-model="queryForm.title" class="w24"></el-input>
             </el-form-item>
-            <el-form-item label="手机号" prop="mobile">
-              <el-input v-model="queryForm.mobile" class="w24"></el-input>
-            </el-form-item>
-            <el-form-item label="状态" prop="status">
-              <el-select v-model="queryForm.status" clearable placeholder="" class="w24">
-                <el-option value="" label="全部" />
-                <el-option :value="0" label="正常" />
-                <el-option :value="1" label="停用" />
+            <el-form-item label="业务类型" prop="business">
+              <el-select v-model="queryForm.business" clearable placeholder="请选择业务类型" class="w24">
+                <el-option :value="0" label="消息公告" />
               </el-select>
             </el-form-item>
-            <el-form-item label="创建时间" prop="status">
+            <el-form-item label="是否已读" prop="isRead">
+              <el-select v-model="queryForm.isRead" clearable placeholder="请选择是否已读" class="w24">
+                <el-option :value="1" label="是" />
+                <el-option :value="0" label="否" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发送类型" prop="sendType">
+              <el-select v-model="queryForm.sendType" clearable placeholder="请选择发送类型" class="w24">
+                <el-option :value="1" label="即时发送" />
+                <el-option :value="2" label="定时发送" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发送状态" prop="sendStatus">
+              <el-select v-model="queryForm.sendStatus" clearable placeholder="请选择发送状态" class="w24">
+                <el-option :value="0" label="待发送" />
+                <el-option :value="1" label="已发送" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="接收人" prop="recipientName">
+              <el-input v-model="queryForm.recipientName" class="w24"></el-input>
+            </el-form-item>
+            <el-form-item label="创建时间" prop="time">
               <el-date-picker
-                v-model="timeList"
+                v-model="queryForm.time"
                 type="datetimerange"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="yyyy-MM-dd HH:mm:ss"
+                @change="changeTime"
               >
               </el-date-picker>
             </el-form-item>
-            <!-- <el-form-item label="开始时间" prop="starttime">
-              <el-date-picker
-                v-model="queryForm.starttime"
-                class="w24"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-              >
-              </el-date-picker>
+            <el-form-item label="类型" prop="type">
+              <el-select v-model="queryForm.type" clearable placeholder="请选择类型" class="w24">
+                <el-option :value="1" label="普通消息" />
+                <el-option :value="2" label="模板消息" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="结束时间" prop="endtime">
-              <el-date-picker
-                v-model="queryForm.endtime"
-                class="w24"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-              >
-              </el-date-picker>
-            </el-form-item> -->
           </div>
           <div class="right-btn">
             <el-form-item>
@@ -62,9 +65,6 @@
       <el-row class="pt20 pb10">
         <el-col :span="24">
           <el-button type="primary" class="mr20 mb10" @click="openAdd">新增</el-button>
-          <el-button type="warning" class="mr20 mb10" :disabled="selectOption.multiple" @click="normalBatchAdmin">批量启用</el-button>
-          <el-button type="warning" class="mr20 mb10" :disabled="selectOption.multiple" @click="stopBatchAdmin">批量停用</el-button>
-          <el-button type="danger" class="mr20 mb10" :disabled="selectOption.multiple" @click="openDelete(2,null)">批量删除</el-button>
         </el-col>
       </el-row>
       <el-row class="pb10">
@@ -74,38 +74,29 @@
             :data="dataList"
             stripe
             style="width: 100%"
-            @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="realname" min-width="150" label="姓名"></el-table-column>
-            <el-table-column prop="status" min-width="80" label="性别">
-              <template slot-scope="scope">
-                <span v-if="scope.row.gender == 'MALE'" class="c-darkBlue">男</span>
-                <span v-else-if="scope.row.gender == 'FEMALE'" class="c-red">女</span>
-                <span v-else class="c-red">未知</span>
-              </template>
+            <el-table-column prop="id" width="80" label="序号"></el-table-column>
+            <el-table-column prop="businessName" min-width="120" label="消息类型">
+              <template slot-scope="scope">{{ scope.row.type === 1 ? '普通消息' : '模板消息' }}</template>
             </el-table-column>
-            <!-- <el-table-column prop="userId" min-width="120" label="编号"></el-table-column> -->
-            <el-table-column prop="username" min-width="120" label="账号"></el-table-column>
-            <!-- <el-table-column prop="password" min-width="120" label="密码"></el-table-column> -->
-            <el-table-column prop="status" min-width="80" label="账号状态">
-              <template slot-scope="scope">
-                <span v-if="scope.row.status == '0'" class="c-darkBlue">{{ scope.row.statusDes }}</span>
-                <span v-else class="c-red">{{ scope.row.statusDes }}</span>
-              </template>
+            <el-table-column min-width="120" label="业务类型">
+              <template slot-scope="scope">{{ scope.row.sendTypeDes }}</template>
             </el-table-column>
-            <el-table-column prop="mobile" min-width="120" label="手机"></el-table-column>
-            <el-table-column prop="email" min-width="180" label="邮箱"></el-table-column>
             <el-table-column prop="createTime" min-width="150" label="创建时间"></el-table-column>
-            <el-table-column prop="expiredTime" min-width="150" label="账号到期时间"></el-table-column>
-            <el-table-column label="操作" fixed="right" width="180">
-              <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="openEdit(scope.row)">修改</el-button>
-                <el-button v-if="scope.row.status != '0'" size="mini" type="text" class="c-darkBlue" @click="normalAdmin(scope.row)">启用</el-button>
-                <el-button v-else size="mini" type="text" class="c-red" @click="stopAdmin(scope.row)">停用</el-button>
-                <el-button size="mini" type="text" class="c-red" @click="openDelete(1, scope.row)">删除</el-button>
-              </template>
+            <el-table-column prop="scheduledSendTime" min-width="150" label="计划发送时间"></el-table-column>
+            <el-table-column min-width="120" label="接收人">
+              <template slot-scope="scope">{{ scope.row.recipientName }}</template>
             </el-table-column>
+            <el-table-column prop="sendStatusDes" min-width="120" label="发送状态"></el-table-column>
+            <el-table-column min-width="120" label="已读">
+              <template slot-scope="scope">{{ scope.row.isRead === 1 ? '是' : '否' }}</template>
+            </el-table-column>
+            <el-table-column min-width="150" label="已处理">
+              <template slot-scope="scope">{{ scope.row.isHandle === 1 ? '是' : '否' }}</template>
+            </el-table-column>
+            <el-table-column prop="sendTime" min-width="150" label="发送时间"></el-table-column>
+            <el-table-column prop="title" min-width="120" label="模版标题"></el-table-column>
+            <el-table-column prop="content" min-width="240" label="模版内容"></el-table-column>
           </el-table>
         </el-col>
       </el-row>
@@ -118,427 +109,258 @@
       />
     </div>
     <!-- 新增/修改 弹窗 -->
-    <mus-dialog
+    <el-dialog
       :title="dialogOption.title"
       :loading="dialogOption.loading"
-      :is-show="dialogOption.show"
       :width="'860px'"
-      @handleClose="dialogOption.show = false"
-      @handleConfirm="handleConfirm"
+      :visible.sync="dialogOption.show"
     >
-      <div class="pl24 pr24 pt24 pb24">
-        <el-form ref="form" :model="form" :rules="rules" label-width="130px" :inline="true">
-          <el-form-item label="用户名称：" prop="username">
-            <el-input v-model="form.username" class="w24"></el-input>
+      <div class="pl24 pr24 pt24">
+        <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+          <el-form-item label="消息标题：" prop="title">
+            <el-input v-model="form.title" class="w50"></el-input>
           </el-form-item>
-          <el-form-item label="登录密码：" prop="password">
-            <el-input v-model="form.password" class="w24"></el-input>
+          <el-form-item label="消息内容：" prop="content">
+            <el-input
+              v-model="form.content"
+              type="textarea"
+              class="w50"
+              :rows="4"
+            ></el-input>
           </el-form-item>
-          <el-form-item label="邮箱：" prop="email">
-            <el-input v-model="form.email" class="w24"></el-input>
-          </el-form-item>
-          <el-form-item label="手机：" prop="mobile">
-            <el-input v-model="form.mobile" class="w24"></el-input>
-          </el-form-item>
-          <el-form-item label="状态：" prop="status">
-            <div class="w24">
-              <el-radio v-model="form.status" :label="0">正常</el-radio>
-              <el-radio v-model="form.status" :label="1">无效</el-radio>
-            </div>
-          </el-form-item>
-          <el-form-item label="排序：" prop="sort">
-            <el-input-number v-model="form.sort" class="w24" controls-position="right" :min="1" :max="999999"></el-input-number>
-          </el-form-item>
-          <el-form-item label="用户姓名：" prop="realname">
-            <el-input v-model="form.realname" class="w24"></el-input>
-          </el-form-item>
-          <el-form-item label="用户类型：" prop="userType">
-            <el-select v-model="form.userType" clearable placeholder="" class="w24">
-              <el-option label="超级管理员" :value="0" />
-              <el-option label="管理员" :value="1" />
+          <el-form-item label="发送类型：" prop="sendType">
+            <el-select v-model="form.sendType" clearable placeholder="请选择发送类型" class="w50">
+              <el-option :value="1" label="及时发送" />
+              <el-option :value="2" label="定时发送" />
             </el-select>
           </el-form-item>
-          <el-form-item label="性别：" prop="gender">
-            <el-select v-model="form.gender" clearable placeholder="" class="w24">
-              <el-option label="男" value="MALE" />
-              <el-option label="女" value="FEMALE" />
-              <el-option label="未知" value="UNKNOW" />
-            </el-select>
+          <el-form-item v-if="form.sendType===2" label="定时发送时间：" prop="scheduledSendTime">
+            <el-date-picker
+              v-model="form.scheduledSendTime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              class="w50"
+              type="datetime"
+              placeholder="请选择定时发送时间"
+            >
+            </el-date-picker>
           </el-form-item>
-          <el-form-item label="用户角色：" prop="userManageroleId">
-            <el-select v-model="form.userManageroleId" filterable clearable placeholder="" class="w24">
+          <el-form-item label="是否发送给所有用户：" prop="sendToAll">
+            <el-radio-group v-model="form.sendToAll" class="w50">
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="form.sendToAll===0" label="接收人：" prop="recipientArr">
+            <el-select
+              v-model="form.recipientArr"
+              class="w50"
+              multiple
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入姓名查询"
+              :remote-method="remoteMethod"
+              :loading="loading"
+            >
               <el-option
-                v-for="item in roleList"
-                :key="item.id"
-                :label="item.roleName"
-                :value="item.id"
-              />
+                v-for="item in recipientArrList"
+                :key="item.userId"
+                :label="item.realname"
+                :value="item.userId"
+              >
+              </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="过期时间：" prop="expiredTime">
-            <el-date-picker
-              v-model="form.expiredTime"
-              class="w24"
-              type="datetime"
-              placeholder="请选择"
-              default-time="23:59:59"
-              value-format="yyyy-MM-dd HH:mm:ss"
-            >
-            </el-date-picker>
-          </el-form-item>
         </el-form>
+        <div slot="footer" class="text-center">
+          <el-button type="primary" @click="handleConfirm">确 定</el-button>
+          <el-button class="ml20" @click="dialogOption.show=false">取 消</el-button>
+        </div>
       </div>
-    </mus-dialog>
-    <!-- 启用 弹窗 -->
-    <mus-dialog
-      :title="dialogNormal.title"
-      :loading="dialogNormal.loading"
-      :is-show="dialogNormal.show"
-      :width="'480px'"
-      @handleClose="dialogNormal.show = false"
-      @handleConfirm="normalConfirm"
-    >
-      <div class="pl24 pr24 pt24 pb24">
-        <el-form ref="normalForm" :model="normalForm" label-width="130px" :inline="true" style="text-align:center;">
-          <el-form-item label="过期时间：" prop="expiredTime">
-            <el-date-picker
-              v-model="normalForm.expiredTime"
-              class="w24"
-              type="datetime"
-              placeholder="请选择"
-              default-time="23:59:59"
-              value-format="yyyy-MM-dd HH:mm:ss"
-            >
-            </el-date-picker>
-          </el-form-item>
-        </el-form>
-      </div>
-    </mus-dialog>
+    </el-dialog>
   </div>
 </template>
 <script>
 import {
-  getDataList,
-  saveAdd,
-  saveEdit,
-  getSelectList,
-  getInfoById,
-  deleteUser,
-  stopAdmin,
-  stopBatchAdmin,
-  normalAdmin,
-  normalBatchAdmin
-} from '@/api/system/account'
+  getSysMessageListPage,
+  addSysMessage,
+  getQueryUserPageList
+} from '@/api/msg/announcement'
 export default {
-  name: 'Account',
+  name: 'Announcement',
   data() {
+    const validateTime = (rule, value, callback) => {
+      if (this.form.sendType === 2 && this.form.scheduledSendTime === '') {
+        callback(new Error('请选择定时发送时间'))
+      } else {
+        callback()
+      }
+    }
+    const validateRecipient = (rule, value, callback) => {
+      if (this.form.sendToAll === 0 && this.form.recipientArr.length <= 0) {
+        callback(new Error('请选择接收人'))
+      } else {
+        callback()
+      }
+    }
     return {
       total: 0,
-      // 选择对象
-      selectOption: {
-        // 选中数组
-        ids: [],
-        // 非单个禁用
-        single: true,
-        // 非多个禁用
-        multiple: true
-      },
-      // 默认弹窗对象
+      // 新增/修改 弹窗对象
       dialogOption: {
         title: '',
         show: false,
         loading: false
       },
-      // 启用对象
-      dialogNormal: {
-        title: '',
-        show: false,
-        loading: false
-      },
-      // 启用表单
-      normalForm: {
-        type: '', // 1单个 2批量
-        expiredTime: '' // 过期日期
-      },
-      tabs: '',
-      timeList: [],
       loading: false,
       dataList: [],
-      roleList: [], // 角色列表
+      recipientArrList: [],
       queryForm: {
-        starttime: '', // 开始时间
-        endtime: '', // 结束时间
-        username: '', // 用户名称
-        mobile: '', // 手机号
-        status: '', // 用户状态 0正常 1停用
+        title: '', // 标题
+        sendType: '', // 发送类型
+        business: '',
+        isRead: '',
+        sendStatus: '',
+        recipient: '',
+        recipientName: '',
+        type: '',
+        time: [],
         page: 1, // 当前页
         limit: 10 // 每页条数
       },
+      // 消息form
       form: {
-        username: '', // 用户名称
-        password: '', // 登陆密码
-        email: '', // 邮箱
-        mobile: '', // 手机
-        status: '', // 数据状态 0.正常 1 无效 -1删除
-        sort: '', // 排序
-        realname: '', // 用户姓名
-        userType: '', // 用户类型 0超级管理员给/1管理员
-        gender: '', // 性别(MALE男/FEMALE女/UNKNOW未知)
-        userManageroleId: '', // 后台用户管理员角色id
-        expiredTime: '' // 过期日期
+        title: '', // 消息标题
+        content: '', // 消息内容
+        sendType: '', // 发送类型
+        scheduledSendTime: '', // 有效时间
+        sendToAll: '', // 是否发送给所有用户
+        recipientArr: [] // 接收人
       },
       rules: {
-        username: [
-          { required: true, message: '请输入用户账号', trigger: 'blur' }
+        title: [
+          { required: true, message: '请输入消息标题', trigger: 'blur' }
         ],
-        password: [
-          { required: true, message: '请输入登录密码', trigger: 'blur' }
+        content: [
+          { required: true, message: '请输入消息内容', trigger: 'blur' }
         ],
-        userType: [
-          { required: true, message: '请选择用户类型', trigger: ['blur', 'change'] }
+        scheduledSendTime: [
+          { validator: validateTime, trigger: ['blur', 'change'] }
         ],
-        status: [
-          { required: true, message: '请选择用户状态', trigger: ['blur', 'change'] }
+        sendType: [
+          { required: true, message: '请选择发送类型', trigger: ['blur', 'change'] }
         ],
-        gender: [
-          { required: true, message: '请选择性别', trigger: ['blur', 'change'] }
+        sendToAll: [
+          { required: true, message: '请选择是否发送给所有用户', trigger: 'change' }
         ],
-        userManageroleId: [
-          { required: true, message: '请选择角色', trigger: ['blur', 'change'] }
+        recipientArr: [
+          { validator: validateRecipient, trigger: ['blur', 'change'] }
         ]
       }
-
     }
   },
   created() {
-    this.getSelectList()
     this.getDataList()
   },
   methods: {
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.selectOption.ids = selection.map(item => item.userId)
-      this.selectOption.single = selection.length !== 1
-      this.selectOption.multiple = !selection.length
-    },
     // 查询列表
     getDataList() {
       this.loading = true
-      this.queryForm.starttime = this.timeList && this.timeList[0]
-      this.queryForm.endtime = this.timeList && this.timeList[1]
-      getDataList(this.queryForm).then(res => {
+      getSysMessageListPage(this.queryForm).then(res => {
         this.dataList = res.data || []
         this.total = res.count || 0
         this.loading = false
       })
     },
-    // 查询角色列表
-    getSelectList() {
-      getSelectList().then(res => {
-        this.roleList = res.data || []
-      })
+    // 选择搜索时间赋值
+    changeTime(res) {
+      if (res && res.length > 1) {
+        this.queryForm.startTime = res[0]
+        this.queryForm.endTime = res[1]
+      } else {
+        this.queryForm.startTime = ''
+        this.queryForm.endTime = ''
+      }
     },
-    // 打开新增窗口
+    // 查询接收人
+    remoteMethod(str) {
+      if (str !== '') {
+        getQueryUserPageList({
+          realName: str,
+          page: 1,
+          limit: 10000
+        }).then(res => {
+          this.recipientArrList = res.data || []
+        })
+      }
+    },
+    // 打开新增模版窗口
     openAdd() {
       this.dialogOption = {
-        title: '新增账号',
+        title: '新增通知公告',
         show: true,
         loading: false
       }
       this.form = {
-        username: '', // 用户名称
-        password: '', // 登陆密码
-        email: '', // 邮箱
-        mobile: '', // 手机
-        status: 0, // 数据状态 0.正常 1 无效 -1删除
-        sort: '', // 排序
-        realname: '', // 用户姓名
-        userType: '', // 用户类型 0超级管理员给/1管理员
-        gender: '', // 性别(MALE男/FEMALE女/UNKNOW未知)
-        userManageroleId: '', // 后台用户管理员角色id
-        expiredTime: '' // 过期日期
+        title: '', // 消息标题
+        content: '', // 消息内容
+        sendType: '', // 发送类型
+        scheduledSendTime: '', // 有效时间
+        sendToAll: '', // 是否发送给所有用户
+        recipientArr: [] // 接收人
       }
-      this.resetForm('form')
-    },
-    // 打开编辑窗口
-    openEdit(row) {
-      this.dialogOption = {
-        title: '编辑账号',
-        show: true,
-        loading: false
-      }
-      this.form = JSON.parse(JSON.stringify(row))
       this.resetForm('form')
     },
     // 保存回调
     handleConfirm() {
+      console.log(this.form)
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.form.userId) {
-            this.saveEdit()
-          } else {
-            this.saveAdd()
-          }
+          this.dialogOption.loading = true
+          addSysMessage({
+            title: this.form.title,
+            sendType: this.form.sendType,
+            scheduledSendTime: this.form.scheduledSendTime,
+            content: this.form.content,
+            sendToAll: this.form.sendToAll,
+            recipientArr: this.form.recipientArr
+          }).then(res => {
+            this.$notify.success({
+              title: '保存成功'
+            })
+            this.getDataList()
+            this.dialogOption.show = false
+            this.dialogOption.loading = false
+          }).catch(e => {
+            this.dialogOption.loading = false
+          })
         } else {
           return false
         }
-      })
-    },
-    // 新增保存
-    saveAdd() {
-      this.dialogOption.loading = true
-      saveAdd(this.form).then(res => {
-        this.$notify.success({
-          title: '保存成功'
-        })
-        this.getDataList()
-        this.dialogOption.show = false
-        this.dialogOption.loading = false
-      }).catch(e => {
-        this.dialogOption.loading = false
-      })
-    },
-    // 编辑保存
-    saveEdit() {
-      this.dialogOption.loading = true
-      saveEdit(this.form).then(res => {
-        this.$notify.success({
-          title: '保存成功'
-        })
-        this.getDataList()
-        this.dialogOption.show = false
-        this.dialogOption.loading = false
-      }).catch(e => {
-        this.dialogOption.loading = false
-      })
-    },
-    // 打开删除 type:1 单个 type:2 批量
-    openDelete(type, row) {
-      let title = type === 1 ? '单个' : '批量'
-      this.$confirm('此操作将' + title + '删除账号, 是否继续?', '账号删除', {
-        cancelButtonText: '取消',
-        confirmButtonText: '确定',
-        type: 'warning'
-      }).then(() => {
-        let json = type === 1 ? [row.userId] : this.selectOption.ids
-        deleteUser(json, type).then(res => {
-          this.$notify.success({
-            title: '操作成功'
-          })
-          this.getDataList()
-        })
-      }).catch(() => {
-
-      })
-    },
-    // 启用保存
-    normalConfirm() {
-      if (this.normalForm.type === 1) {
-        this.$confirm('此操作将单个启用账号, 是否继续?', '账号启用', {
-          cancelButtonText: '取消',
-          confirmButtonText: '确定',
-          type: 'warning'
-        }).then(() => {
-          this.dialogNormal.loading = true
-          normalAdmin(this.normalForm).then(res => {
-            this.$notify.success({
-              title: '操作成功'
-            })
-            this.getDataList()
-            this.dialogNormal.show = false
-            this.dialogNormal.loading = false
-          }).catch(() => {
-            this.dialogNormal.loading = false
-          })
-        }).catch(() => {
-
-        })
-      } else {
-        this.$confirm('此操作将批量启用账号, 是否继续?', '账号启用', {
-          cancelButtonText: '取消',
-          confirmButtonText: '确定',
-          type: 'warning'
-        }).then(() => {
-          this.dialogNormal.loading = true
-          normalBatchAdmin(this.normalForm).then(res => {
-            this.$notify.success({
-              title: '操作成功'
-            })
-            this.getDataList()
-            this.dialogNormal.show = false
-            this.dialogNormal.loading = false
-          }).catch(() => {
-            this.dialogNormal.loading = false
-          })
-        }).catch(() => {
-
-        })
-      }
-    },
-    // 打开启用
-    normalAdmin(row) {
-      // 启用对象
-      this.dialogNormal = {
-        title: '单个启用',
-        show: true,
-        loading: false
-      }
-      this.normalForm = {
-        type: 1,
-        expiredTime: '',
-        userId: row.userId
-      }
-    },
-    // 打开批量启用
-    normalBatchAdmin() {
-      // 启用对象
-      this.dialogNormal = {
-        title: '批量启用',
-        show: true,
-        loading: false
-      }
-      this.normalForm = {
-        type: 2,
-        expiredTime: '',
-        userId: this.selectOption.ids
-      }
-    },
-    // 打开停用
-    stopAdmin(row) {
-      this.$confirm('此操作将单个停用账号, 是否继续?', '账号停用', {
-        cancelButtonText: '取消',
-        confirmButtonText: '确定',
-        type: 'warning'
-      }).then(() => {
-        stopAdmin({ userId: row.userId }).then(res => {
-          this.$notify.success({
-            title: '操作成功'
-          })
-          this.getDataList()
-        })
-      }).catch(() => {
-
-      })
-    },
-    // 打开批量停用
-    stopBatchAdmin() {
-      this.$confirm('此操作将批量停用账号, 是否继续?', '账号停用', {
-        cancelButtonText: '取消',
-        confirmButtonText: '确定',
-        type: 'warning'
-      }).then(() => {
-        stopBatchAdmin(this.selectOption.ids).then(res => {
-          this.$notify.success({
-            title: '操作成功'
-          })
-          this.getDataList()
-        })
-      }).catch(() => {
-
       })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+#paramsId,#contentId{
+  display: block;
+  resize: vertical;
+  padding: 5px 15px;
+  line-height: 1.5;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: inherit;
+  color: #606266;
+  background-color: #FFF;
+  background-image: none;
+  border: 1px solid #DCDFE6;
+  border-radius: 4px;
+  -webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+  &:focus{
+    outline: 0;
+    border-color: #409EFF;
+  }
+}
 </style>
