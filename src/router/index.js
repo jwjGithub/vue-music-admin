@@ -333,6 +333,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/msgs',
+    component: Layout,
+    redirect: '/msgs/template',
+    name: 'Msgs',
+    meta: { title: '消息管理', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'template',
+        name: 'Template',
+        component: () => import('@/views/msgs/template/index'),
+        meta: { title: '消息模版', icon: 'table' }
+      },
+      {
+        path: 'announcement',
+        name: 'Announcement',
+        component: () => import('@/views/msgs/announcement/index'),
+        meta: { title: '通知公告', icon: 'tree' }
+      }
+    ]
+  },
+  {
     path: '/test',
     component: Layout,
     redirect: '/test/index',
