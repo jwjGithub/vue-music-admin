@@ -208,32 +208,26 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/musician',
-    component: Layout,
-    redirect: '/musician/basicInfo',
-    meta: { title: '音乐人管理', icon: 'tree' },
-    children: [
-      {
-        path: 'basicInfo',
-        name: 'BasicInfo',
-        component: () => import('@/views/musician/basicInfo/index'),
-        meta: { title: '基本信息', icon: 'table' }
-      },
-      {
-        path: 'memberInfo',
-        name: 'MemberInfo',
-        component: () => import('@/views/musician/memberInfo/index'),
-        meta: { title: '会员信息', icon: 'table' }
-      }
-      // {
-      //   path: 'tree1',
-      //   name: 'Tree1',
-      //   component: () => import('@/views/tree/index'),
-      //   meta: { title: '会员信息', icon: 'tree' }
-      // }
-    ]
-  },
+  // {
+  //   path: '/musician',
+  //   component: Layout,
+  //   redirect: '/musician/basicInfo',
+  //   meta: { title: '音乐人管理', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'basicInfo',
+  //       name: 'BasicInfo',
+  //       component: () => import('@/views/musician/basicInfo/index'),
+  //       meta: { title: '基本信息', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'memberInfo',
+  //       name: 'MemberInfo',
+  //       component: () => import('@/views/musician/memberInfo/index'),
+  //       meta: { title: '会员信息', icon: 'table' }
+  //     }
+  //   ]
+  // },
   {
     path: '/example2',
     component: Layout,
@@ -338,27 +332,27 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/msgs',
-    component: Layout,
-    redirect: '/msgs/template',
-    name: 'Msgs',
-    meta: { title: '消息管理', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'template',
-        name: 'Template',
-        component: () => import('@/views/msgs/template/index'),
-        meta: { title: '消息模版', icon: 'table' }
-      },
-      {
-        path: 'announcement',
-        name: 'Announcement',
-        component: () => import('@/views/msgs/announcement/index'),
-        meta: { title: '通知公告', icon: 'tree' }
-      }
-    ]
-  },
+  // {
+  //   path: '/msgs',
+  //   component: Layout,
+  //   redirect: '/msgs/template',
+  //   name: 'Msgs',
+  //   meta: { title: '消息管理', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'template',
+  //       name: 'Template',
+  //       component: () => import('@/views/msgs/template/index'),
+  //       meta: { title: '消息模版', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'announcement',
+  //       name: 'Announcement',
+  //       component: () => import('@/views/msgs/announcement/index'),
+  //       meta: { title: '通知公告', icon: 'tree' }
+  //     }
+  //   ]
+  // },
   {
     path: '/test',
     component: Layout,
