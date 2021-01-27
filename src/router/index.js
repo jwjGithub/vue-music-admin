@@ -53,7 +53,7 @@ export const constantRoutes = [
     //   component: () => import('@/views/dashboard/index'),
     //   meta: { title: 'Dashboard', icon: 'dashboard' }
     // }]
-  },
+  }
   // {
   //   path: '/system',
   //   component: Layout,
@@ -228,33 +228,33 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/example2',
-    component: Layout,
-    redirect: '/example2/table1',
-    name: 'Example',
-    meta: { title: '曲库管理', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '歌曲信息', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '歌曲状态', icon: 'tree' }
-      },
-      {
-        path: 'tree1',
-        name: 'Tree1',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '举报审核', icon: 'tree' }
-      }
-    ]
-  },
+  // {
+  //   path: '/example2',
+  //   component: Layout,
+  //   redirect: '/example2/table1',
+  //   name: 'Example',
+  //   meta: { title: '曲库管理', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: '歌曲信息', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: '歌曲状态', icon: 'tree' }
+  //     },
+  //     {
+  //       path: 'tree1',
+  //       name: 'Tree1',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: '举报审核', icon: 'tree' }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/nested',
   //   component: Layout,
@@ -311,62 +311,62 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/example3',
-    component: Layout,
-    redirect: '/example3/table1',
-    name: 'Example',
-    meta: { title: '财务管理', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '收费项管理', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '优惠管理', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/msgs',
-    component: Layout,
-    redirect: '/msgs/template',
-    name: 'Msgs',
-    meta: { title: '消息管理', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'template',
-        name: 'Template',
-        component: () => import('@/views/msgs/template/index'),
-        meta: { title: '消息模版', icon: 'table' }
-      },
-      {
-        path: 'announcement',
-        name: 'Announcement',
-        component: () => import('@/views/msgs/announcement/index'),
-        meta: { title: '通知公告', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/test',
-    component: Layout,
-    redirect: '/test/index',
-    meta: { title: '接口测试', icon: 'tree' },
-    children: [
-      {
-        path: 'index',
-        name: 'Test',
-        component: () => import('@/views/test'),
-        meta: { title: '接口测试', icon: 'table' }
-      }
-    ]
-  }
+  // {
+  //   path: '/example3',
+  //   component: Layout,
+  //   redirect: '/example3/table1',
+  //   name: 'Example',
+  //   meta: { title: '财务管理', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: '收费项管理', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: '优惠管理', icon: 'tree' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/msgs',
+  //   component: Layout,
+  //   redirect: '/msgs/template',
+  //   name: 'Msgs',
+  //   meta: { title: '消息管理', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'template',
+  //       name: 'Template',
+  //       component: () => import('@/views/msgs/template/index'),
+  //       meta: { title: '消息模版', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'announcement',
+  //       name: 'Announcement',
+  //       component: () => import('@/views/msgs/announcement/index'),
+  //       meta: { title: '通知公告', icon: 'tree' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/test',
+  //   component: Layout,
+  //   redirect: '/test/index',
+  //   meta: { title: '接口测试', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Test',
+  //       component: () => import('@/views/test'),
+  //       meta: { title: '接口测试', icon: 'table' }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/songbook',
   //   component: Layout,

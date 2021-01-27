@@ -75,7 +75,9 @@
             stripe
             style="width: 100%"
           >
-            <el-table-column prop="id" width="80" label="序号"></el-table-column>
+            <el-table-column min-width="55" label="序号">
+              <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+            </el-table-column>
             <el-table-column prop="businessName" min-width="120" label="消息类型">
               <template slot-scope="scope">{{ scope.row.type === 1 ? '普通消息' : '模板消息' }}</template>
             </el-table-column>

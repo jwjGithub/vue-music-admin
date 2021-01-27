@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2021-01-07 18:33:28
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-01-17 21:29:23
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-01-27 10:42:05
 -->
 <template>
   <div class="main-page">
@@ -219,23 +219,22 @@
                 <el-col :span="24">
                   <el-form-item label="账号状态：">
                     <el-select v-model="editForm.status" clearable placeholder="请选择状态" class="w24">
-                      <el-option value="" label="全部" />
                       <el-option :value="0" label="正常" />
                       <el-option :value="1" label="停用" />
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <el-col v-if="editForm.status == 1" :span="24">
                   <el-form-item label="封禁时间：">
                     <el-date-picker v-model="editForm.banTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <el-col v-if="editForm.status == 1" :span="24">
                   <el-form-item label="解禁时间：">
                     <el-date-picker v-model="editForm.unsealTime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <el-col v-if="editForm.status == 1" :span="24">
                   <el-form-item label="封号原因：">
                     <el-input v-model="editForm.banReason" type="textarea" :rows="3" class="w24"></el-input>
                   </el-form-item>

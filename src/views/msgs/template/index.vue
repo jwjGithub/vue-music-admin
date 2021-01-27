@@ -37,12 +37,14 @@
             stripe
             style="width: 100%"
           >
-            <el-table-column prop="id" width="80" label="序号"></el-table-column>
+            <el-table-column min-width="55" label="序号">
+              <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+            </el-table-column>
             <el-table-column prop="businessName" min-width="120" label="业务类型"></el-table-column>
             <el-table-column prop="title" min-width="120" label="模版标题"></el-table-column>
             <el-table-column prop="content" min-width="240" label="模版内容"></el-table-column>
             <el-table-column prop="createUserName" min-width="120" label="创建人"></el-table-column>
-            <el-table-column prop="expireTime" min-width="120" label="操作有效时间"></el-table-column>
+            <el-table-column prop="expireTimeDes" min-width="120" label="操作有效时间"></el-table-column>
             <el-table-column prop="updateUserName" min-width="120" label="修改人"></el-table-column>
             <el-table-column prop="createTime" min-width="150" label="创建时间"></el-table-column>
             <el-table-column prop="updateTime" min-width="150" label="修改时间"></el-table-column>
@@ -88,13 +90,14 @@
               @blur="textareaParamsBlur('contentId','content')"
             ></textarea>
             <div>
-              <el-link type="primary" @click="insertAtCaret('contentId','{ }')">插入变量</el-link>
+              <el-link type="primary" @click="insertAtCaret('contentId','{}')">插入变量</el-link>
             </div>
           </el-form-item>
           <el-form-item label="有效时间：" prop="expireTime">
             <el-input-number v-model="form.day" class="w15" :min="0" :max="999999" /> 天
             <el-input-number v-model="form.hour" class="w15" :min="0" :max="23" /> 时
             <el-input-number v-model="form.minute" class="w15" :min="0" :max="59" /> 分
+            <p class="expire-prompt">温馨提示:有效时间可以为0，为0时模版永久有效</p>
           </el-form-item>
           <el-form-item label="业务类型：" prop="business">
             <el-select v-model="form.business" clearable placeholder="请选择业务类型" class="w24">
@@ -122,7 +125,9 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" width="80" label="序号"></el-table-column>
+        <el-table-column min-width="55" label="序号">
+          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+        </el-table-column>
         <el-table-column prop="name" min-width="80" label="操作名称"></el-table-column>
         <el-table-column prop="uri" label="接口地址"></el-table-column>
         <el-table-column prop="params" label="接口参数"></el-table-column>
@@ -157,8 +162,8 @@
           </el-form-item>
           <el-form-item label="请求方式：" prop="method">
             <el-select v-model="operatingAddForm.method" clearable placeholder="请选择请求方式" class="w24">
-              <el-option :value="1" label="get" />
-              <el-option :value="2" label="post" />
+              <el-option :value="1" label="GET" />
+              <el-option :value="2" label="POST" />
             </el-select>
           </el-form-item>
           <el-form-item label="排序序号：" prop="seq">
@@ -172,7 +177,7 @@
               @blur="textareaParamsBlur('paramsId','params')"
             ></textarea>
             <div>
-              <el-link type="primary" @click="insertAtCaret('paramsId','{ }')">插入变量</el-link>
+              <el-link type="primary" @click="insertAtCaret('paramsId','{}')">插入变量</el-link>
             </div>
           </el-form-item>
           <el-form-item label="操作描述：" prop="description">
@@ -209,7 +214,7 @@ export default {
   name: 'Template',
   data() {
     const validateExpireTime = (rule, value, callback) => {
-      if (this.form.day + this.form.hour + this.form.minute <= 0) {
+      if (this.form.day + this.form.hour + this.form.minute < 0) {
         callback(new Error('请输入有效时间'))
       } else {
         callback()
@@ -248,12 +253,15 @@ export default {
         title: '', // 模版标题
         code: '', // 模版编码
         content: '', // 模版内容
-        expireTime: '', // 有效时间
+        expireTime: 0, // 有效时间
         business: '' // 业务类型
       },
       rules: {
         title: [
           { required: true, message: '请输入模版标题', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入模版编码', trigger: 'blur' }
         ],
         content: [
           { required: true, message: '请输入模版内容', trigger: 'blur' }
@@ -346,6 +354,7 @@ export default {
         show: true,
         loading: false
       }
+      this.resetForm('form')
       this.form.day = parseInt(row.expireTime / (24 * 60 * 60))
       this.form.hour = parseInt((row.expireTime - parseInt(this.form.day * (24 * 60 * 60))) / (60 * 60))
       this.form.minute = ((row.expireTime - parseInt(this.form.day * (24 * 60 * 60))) - (this.form.hour * (60 * 60))) / 60
@@ -354,7 +363,6 @@ export default {
       this.form.content = row.content
       this.form.business = row.business + ''
       this.form.id = row.id
-      this.resetForm('form')
     },
     // 保存回调
     handleConfirm() {
@@ -556,6 +564,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.expire-prompt{
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
 #paramsId,#contentId{
   display: block;
   resize: vertical;
