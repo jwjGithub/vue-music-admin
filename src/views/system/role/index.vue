@@ -142,6 +142,7 @@
               placeholder="请选择"
               default-time="23:59:59"
               value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerOptions"
             >
             </el-date-picker>
           </el-form-item>
@@ -266,6 +267,12 @@ export default {
         roleName: [
           { required: true, message: '请输入角色名称', trigger: 'blur' }
         ]
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          // return time.getTime() < Date.now() - 8.64e7;   //禁用以前的日期，今天不禁用
+          return time.getTime() <= Date.now() // 禁用今天以及以前的日期
+        }
       }
 
     }
@@ -531,7 +538,7 @@ export default {
     }
   }
   .role-tree{
-    // height:300px;
+    height:400px;
     // overflow: hidden;
   }
 </style>
@@ -539,6 +546,7 @@ export default {
   .role-main{
     .add-role-dialog{
       .el-tree{
+        // height:500px;
         >.el-tree-node{
           >.el-tree-node__content{
             background-color:#f5f8fa;

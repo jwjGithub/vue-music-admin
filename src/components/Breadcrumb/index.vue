@@ -1,3 +1,10 @@
+<!--
+ * @Date: 2020-09-10 17:16:46
+ * @Description:
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-02-01 13:59:02
+ * @FilePath: \vue-music-admin\src\components\Breadcrumb\index.vue
+-->
 <template>
   <el-breadcrumb class="app-breadcrumb" separator="/">
     <transition-group name="breadcrumb">
@@ -32,9 +39,9 @@ export default {
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
       const first = matched[0]
 
-      if (!this.isDashboard(first)) {
-        matched = [{ path: '/', meta: { title: '主页' }}].concat(matched)
-      }
+      // if (!this.isDashboard(first)) {
+      //   matched = [{ path: '/', meta: { title: '主页' }}].concat(matched)
+      // }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
     },

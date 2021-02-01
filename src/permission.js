@@ -1,3 +1,10 @@
+/*
+ * @Date: 2020-09-10 17:16:46
+ * @Description: 拦截器
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-02-01 14:06:17
+ * @FilePath: \vue-music-admin\src\permission.js
+ */
 import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // progress bar
@@ -24,6 +31,10 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
+      if (!store.getters.userInfo.userid) {
+        store.dispatch('user/GetInfo').then(res => {
+        })
+      }
       // 判断当前是否已经添加路由
       if (store.getters.permission_routes.length === 0) {
         store.dispatch('GenerateRoutes').then(accessRoutes => {

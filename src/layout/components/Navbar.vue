@@ -7,16 +7,19 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          用户名称
-          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
-          <i class="el-icon-caret-bottom" />
+          <!-- {{ $store.getters.userInfo.realname }} -->
+          <img :src="$store.getters.userInfo.profileUrl" class="user-avatar">
+          <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>
               主页
             </el-dropdown-item>
-          </router-link>
+          </router-link> -->
+          <el-dropdown-item disabled>
+            <p class="ft14 c-black lh18">{{ $store.getters.userInfo.realname }}</p>
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
@@ -117,6 +120,7 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
+        line-height:1;
         margin-top: 5px;
         position: relative;
 

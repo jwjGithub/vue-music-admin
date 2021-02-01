@@ -183,6 +183,7 @@
               placeholder="请选择"
               default-time="23:59:59"
               value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerOptions"
             >
             </el-date-picker>
           </el-form-item>
@@ -208,6 +209,7 @@
               placeholder="请选择"
               default-time="23:59:59"
               value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerOptions"
             >
             </el-date-picker>
           </el-form-item>
@@ -232,6 +234,16 @@ import {
 export default {
   name: 'Account',
   data() {
+    let validatePhone = (rule, value, callback) => {
+      let reg = /^1[0-9]{10}$/
+      if (value === '') {
+        callback(new Error('请输入手机号'))
+      } else if (!reg.test(value)) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback()
+      }
+    }
     return {
       total: 0,
       // 选择对象
@@ -294,6 +306,9 @@ export default {
         password: [
           { required: true, message: '请输入登录密码', trigger: 'blur' }
         ],
+        mobile: [
+          { required: true, validator: validatePhone, trigger: 'blur' }
+        ],
         userType: [
           { required: true, message: '请选择用户类型', trigger: ['blur', 'change'] }
         ],
@@ -306,6 +321,12 @@ export default {
         userManageroleId: [
           { required: true, message: '请选择角色', trigger: ['blur', 'change'] }
         ]
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          // return time.getTime() < Date.now() - 8.64e7;   //禁用以前的日期，今天不禁用
+          return time.getTime() <= Date.now() // 禁用今天以及以前的日期
+        }
       }
 
     }

@@ -1,9 +1,17 @@
+/*
+ * @Date: 2020-09-10 17:16:46
+ * @Description: 用户
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-02-01 14:07:20
+ * @FilePath: \vue-music-admin\src\store\modules\user.js
+ */
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
+    userInfo: {},
     token: getToken(),
     name: '',
     avatar: ''
@@ -24,6 +32,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_USERINFO: (state, userInfo) => {
+    state.userInfo = userInfo
   }
 }
 
@@ -43,19 +54,13 @@ const actions = {
     })
   },
 
-  // get user info
-  getInfo({ commit, state }) {
+  // 查询用户信息
+  GetInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-        if (!data) {
-          return reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+      getInfo().then(res => {
+        const data = res.data
+        console.log(res, '用户信息')
+        commit('SET_USERINFO', data)
         resolve(data)
       }).catch(error => {
         reject(error)
