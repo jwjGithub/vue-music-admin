@@ -3,8 +3,8 @@
  * @version:
  * @Author: jwj
  * @Date: 2021-01-07 18:29:47
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-01-17 19:41:16
+ * @LastEditors: JWJ
+ * @LastEditTime: 2021-02-04 13:52:54
  */
 import request from '@/utils/request'
 
@@ -36,6 +36,14 @@ export function getProfessionSelect(data) {
 export function saveEdit(data) {
   return request({
     url: '/musician/message/update',
+    method: 'post',
+    data: data
+  })
+}
+// 身份证效验
+export function verifyIdCard(data) {
+  return request({
+    url: '/musician/message/verifyIdCard',
     method: 'post',
     data: data
   })

@@ -4,7 +4,7 @@
  * @Author: jwj
  * @Date: 2021-01-07 18:33:28
  * @LastEditors: JWJ
- * @LastEditTime: 2021-01-27 10:42:05
+ * @LastEditTime: 2021-02-04 14:28:22
 -->
 <template>
   <div class="main-page">
@@ -24,8 +24,11 @@
                 <!-- <el-option value="2" label="注销" /> -->
               </el-select>
             </el-form-item>
-            <el-form-item label="入驻时间">
+            <el-form-item label="入驻开始时间" prop="starttime">
               <el-date-picker v-model="queryForm.starttime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="入驻结束时间" prop="endtime">
+              <el-date-picker v-model="queryForm.endtime" type="datetime" class="w24" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             </el-form-item>
           </div>
           <div class="right-btn">
@@ -64,9 +67,9 @@
               <template slot-scope="scope">{{ scope.row.professionDescArray.join(',') }}</template>
             </el-table-column>
             <el-table-column prop="statusDes" min-width="150" label="账号状态"></el-table-column>
-            <el-table-column prop="postNum" min-width="150" label="发布作品数"></el-table-column>
-            <el-table-column prop="dealNum" min-width="80" label="成交作品数"></el-table-column>
-            <el-table-column prop="createTime" min-width="80" label="入驻时间"></el-table-column>
+            <el-table-column prop="postNum" min-width="120" label="发布作品数"></el-table-column>
+            <el-table-column prop="dealNum" min-width="120" label="成交作品数"></el-table-column>
+            <el-table-column prop="createTime" min-width="180" label="入驻时间"></el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="openEdit(scope.row)">编辑</el-button>
@@ -94,7 +97,7 @@
       @handleConfirm="handleConfirm"
     >
       <div class="pl24 pr24 pt24 pb24">
-        <el-form ref="editForm" :model="editForm" label-width="130px" :inline="true">
+        <el-form ref="editForm" :model="editForm" :rules="rules" label-width="130px" :inline="true">
           <el-row :gutter="30">
             <!-- 左边 -->
             <el-col :span="12">
@@ -453,10 +456,8 @@ import {
   getList,
   getMusicianDetail,
   getProfessionSelect,
-  //   saveAdd,
+  verifyIdCard,
   saveEdit
-//   saveDelete,
-//   getUserUnderCom
 } from '@/api/musician/basicInfo/list'
 import Editor from '@/components/Editor'
 import { saveAdd } from '@/api/description'
@@ -466,6 +467,22 @@ export default {
     Editor
   },
   data() {
+    let validateIdCard = (rule, value, callback) => {
+      console.log(rule, 'rule')
+      console.log(value, 'value---')
+      if (value === '' || value === undefined) {
+        callback()
+      } else {
+        let formData = new FormData()
+        formData.append('idCard', value)
+        formData.append('frontOrBack', 'back')
+        verifyIdCard(formData).then(res => {
+          callback()
+        }).catch((res) => {
+          callback(new Error(res.code || '身份证错误'))
+        })
+      }
+    }
     return {
       // 选择对象
       selectOption: {
@@ -501,13 +518,17 @@ export default {
         loading: false
       },
       form: {},
-      editForm: {},
-      professionList: []// 工种列表
-      // rules: {
-      //   baseName: [
-      //     { required: true, message: '请输入自选库名称', trigger: 'blur' }
-      //   ]
-      // }
+      editForm: {
+      },
+      professionList: [], // 工种列表
+      rules: {
+        // front: [
+        //   { validator: validateIdCard, trigger: 'blur' }
+        // ],
+        // back: [
+        //   { validator: validateIdCard, trigger: 'blur' }
+        // ]
+      }
     }
   },
   created() {
@@ -565,7 +586,7 @@ export default {
           profile: info?.base?.profile, // 用户头像，传上传图片接口返回的ID
           profileUrl: info?.base?.profileUrl, // 用户头像，传上传图片接口返回的ID
           stageName: info?.base?.stageName || '', // 音乐人艺名
-          professionArray: info?.base?.professionArray.map(String), // 音乐人工种数组
+          professionArray: info?.base?.professionArray?.map(String), // 音乐人工种数组
           introduction: info?.base?.introduction, // 音乐人简介
           front: info?.idMessage?.frontUrl, // 身份证正面图片
           back: info?.idMessage?.backUrl// 身份证反面图片
@@ -648,31 +669,28 @@ export default {
           this.editForm.back = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
         }
       }
-      // if (window.registerFormData.has(name)) {
-      //   window.registerFormData.delete(name)
-      //   window.registerFormData.append(name, res[0])
-      // } else {
-      //   window.registerFormData.append(name, res[0])
-      // }
     },
     // 默认上传
     handleUpdate(res, name) {
+      console.log(res, '--rrrr')
+      // if (name === 'front') {
+      //   this.editForm.front = res.raw // 获得文件读取成功后的DataURL,也就是base64编码
+      //   this.$refs['editForm'].validateField([name])
+      // } else {
+      //   this.editForm.back = res.raw // 获得文件读取成功后的DataURL,也就是base64编码
+      //   this.$refs['editForm'].validateField([name])
+      // }
       let reader = new FileReader() // 实例化文件读取对象
       reader.readAsDataURL(res.raw) // 将文件读取为 DataURL,也就是base64编码
       reader.onload = (ev) => { // 文件读取成功完成时触发
         if (name === 'front') {
           this.editForm.front = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
+          this.$refs['editForm'].validateField([name])
         } else {
           this.editForm.back = ev.target.result // 获得文件读取成功后的DataURL,也就是base64编码
+          this.$refs['editForm'].validateField([name])
         }
       }
-      // if (window.registerFormData.has(name)) {
-      //   window.registerFormData.delete(name)
-      //   window.registerFormData.append(name, res.raw)
-      // } else {
-      //   window.registerFormData.append(name, res.raw)
-      // }
-      // this.form[name] = name
     }
   }
 }

@@ -202,24 +202,34 @@
               <el-option label="退回" :value="3" />
             </el-select>
           </el-form-item>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item class="mb10" label="公司资质：" prop="url">
-                <el-upload
-                  class="avatar-uploader w24"
-                  :headers="{token: getToken()}"
-                  :action="baseURL + '/company/signup/uploadImg'"
-                  accept="image/*"
-                  :before-upload="handleBeforeUpload"
-                  :show-file-list="false"
-                  :on-success="handleSuccess"
-                >
-                  <img v-if="form.imgUrl" :src="form.imgUrl" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <el-form-item class="mb10" label="公司头像：" prop="profileUrl">
+            <el-upload
+              class="avatar-uploader w24"
+              :headers="{token: getToken()}"
+              :action="baseURL + '/company/signup/uploadImg'"
+              accept="image/*"
+              :before-upload="handleBeforeUpload"
+              :show-file-list="false"
+              :on-success="handleSuccessHead"
+            >
+              <img v-if="form.profileUrl" :src="form.profileUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item class="mb10" label="公司资质：" prop="url">
+            <el-upload
+              class="avatar-uploader w24"
+              :headers="{token: getToken()}"
+              :action="baseURL + '/company/signup/uploadImg'"
+              accept="image/*"
+              :before-upload="handleBeforeUpload"
+              :show-file-list="false"
+              :on-success="handleSuccess"
+            >
+              <img v-if="form.imgUrl" :src="form.imgUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
           <el-row>
             <el-col :span="24">
               <el-form-item label="公司介绍：" style="padding-bottom:66px;" prop="introduction">
@@ -329,6 +339,7 @@ export default {
       }
       let json = row.sysUserEntity || {}
       this.form = {
+        profileUrl: row.profileUrl || '', // 公司头像
         imgUrl: row.lisence && row.lisence.tempUrl || '',
         id: row.id,
         username: json.username, // 管理员账号：
@@ -363,6 +374,7 @@ export default {
       }
       let json = row.sysUserEntity || {}
       this.form = {
+        profileUrl: row.profileUrl || '', // 公司头像
         imgUrl: row.lisence && row.lisence.tempUrl || '',
         id: row.id,
         username: json.username, // 管理员账号：
@@ -410,6 +422,11 @@ export default {
         return false
       }
       return true
+    },
+    // 上传成功回调
+    handleSuccessHead(res, file, fileList) {
+      console.log(res, 'rrr')
+      this.$set(this.form, 'profileUrl', res.data.url)
     },
     // 上传成功回调
     handleSuccess(res, file, fileList) {
