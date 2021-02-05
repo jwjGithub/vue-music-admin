@@ -5,7 +5,7 @@
         <div class="query-item">
           <div class="left-query">
             <el-form-item label="模版标题" prop="title">
-              <el-input v-model="queryForm.title" class="w24"></el-input>
+              <el-input v-model="queryForm.title" class="w24" placeholder="请输入模版标题"></el-input>
             </el-form-item>
             <el-form-item label="业务类型" prop="business">
               <el-select v-model="queryForm.business" clearable placeholder="请选择业务类型" class="w24">
@@ -31,7 +31,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="接收人" prop="recipientName">
-              <el-input v-model="queryForm.recipientName" class="w24"></el-input>
+              <el-input v-model="queryForm.recipientName" class="w24" placeholder="请输入接收人"></el-input>
             </el-form-item>
             <el-form-item label="创建时间" prop="time">
               <el-date-picker
@@ -52,19 +52,20 @@
               </el-select>
             </el-form-item>
           </div>
-          <div class="right-btn">
-            <el-form-item>
-              <el-button type="primary" :loading="loading" @click="getDataList">
-                <i class="el-icon-search"></i>
-                <span>搜索</span>
-              </el-button>
-            </el-form-item>
+          <div class="right-btn" style="width: 200px;text-align: right;">
+            <el-button type="primary" :loading="loading" @click="getDataList">
+              <i class="el-icon-search"></i>
+              <span>搜索</span>
+            </el-button>
+            <el-button type="primary" @click="resetTable">
+              <span>重置</span>
+            </el-button>
           </div>
         </div>
       </el-form>
       <el-row class="pt20 pb10">
         <el-col :span="24">
-          <el-button type="primary" class="mr20 mb10" @click="openAdd">新增</el-button>
+          <el-button type="primary" class="mr20 mb10" @click="openAdd">发送消息</el-button>
         </el-col>
       </el-row>
       <el-row class="pb10">
@@ -97,8 +98,15 @@
               <template slot-scope="scope">{{ scope.row.isHandle === 1 ? '是' : '否' }}</template>
             </el-table-column>
             <el-table-column prop="sendTime" min-width="150" label="发送时间"></el-table-column>
-            <el-table-column prop="title" min-width="120" label="模版标题"></el-table-column>
-            <el-table-column prop="content" min-width="240" label="模版内容"></el-table-column>
+            <el-table-column prop="title" min-width="120" label="标题"></el-table-column>
+            <el-table-column min-width="240" label="内容">
+              <template slot-scope="scope">
+                <el-tooltip placement="top">
+                  <div slot="content" style="max-width:300px;">{{ scope.row.content }}</div>
+                  <span class="text-ellipsis">{{ scope.row.content }}</span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
           </el-table>
         </el-col>
       </el-row>
@@ -132,7 +140,7 @@
           </el-form-item>
           <el-form-item label="发送类型：" prop="sendType">
             <el-select v-model="form.sendType" clearable placeholder="请选择发送类型" class="w50">
-              <el-option :value="1" label="及时发送" />
+              <el-option :value="1" label="即时发送" />
               <el-option :value="2" label="定时发送" />
             </el-select>
           </el-form-item>
@@ -271,7 +279,16 @@ export default {
         this.dataList = res.data || []
         this.total = res.count || 0
         this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
+    },
+    // 重置table查询
+    resetTable() {
+      this.resetForm('queryForm')
+      this.queryForm.startTime = ''
+      this.queryForm.endTime = ''
+      this.getDataList()
     },
     // 选择搜索时间赋值
     changeTime(res) {
@@ -298,7 +315,7 @@ export default {
     // 打开新增模版窗口
     openAdd() {
       this.dialogOption = {
-        title: '新增通知公告',
+        title: '系统消息发送',
         show: true,
         loading: false
       }

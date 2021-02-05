@@ -5,22 +5,23 @@
         <div class="query-item">
           <div class="left-query">
             <el-form-item label="模版标题" prop="title">
-              <el-input v-model="queryForm.title" class="w24"></el-input>
+              <el-input v-model="queryForm.title" class="w24" placeholder="请输入模版标题"></el-input>
             </el-form-item>
             <el-form-item label="业务类型" prop="business">
-              <el-select v-model="queryForm.business" clearable placeholder="" class="w24">
+              <el-select v-model="queryForm.business" clearable placeholder="请选择业务类型" class="w24">
                 <el-option value="" label="全部" />
                 <el-option v-for="item in businessTypeList" :key="item.id" :value="item.code" :label="item.des" />
               </el-select>
             </el-form-item>
           </div>
-          <div class="right-btn">
-            <el-form-item>
-              <el-button type="primary" :loading="loading" @click="getDataList">
-                <i class="el-icon-search"></i>
-                <span>搜索</span>
-              </el-button>
-            </el-form-item>
+          <div class="right-btn" style="width: 180px;text-align: right;">
+            <el-button type="primary" :loading="loading" @click="getDataList">
+              <i class="el-icon-search"></i>
+              <span>搜索</span>
+            </el-button>
+            <el-button type="primary" @click="resetTable">
+              <span>重置</span>
+            </el-button>
           </div>
         </div>
       </el-form>
@@ -42,7 +43,14 @@
             </el-table-column>
             <el-table-column prop="businessName" min-width="120" label="业务类型"></el-table-column>
             <el-table-column prop="title" min-width="120" label="模版标题"></el-table-column>
-            <el-table-column prop="content" min-width="240" label="模版内容"></el-table-column>
+            <el-table-column min-width="240" label="模版内容">
+              <template slot-scope="scope">
+                <el-tooltip placement="top">
+                  <div slot="content" style="max-width:300px;">{{ scope.row.content }}</div>
+                  <span class="text-ellipsis">{{ scope.row.content }}</span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
             <el-table-column prop="createUserName" min-width="120" label="创建人"></el-table-column>
             <el-table-column prop="expireTimeDes" min-width="120" label="操作有效时间"></el-table-column>
             <el-table-column prop="updateUserName" min-width="120" label="修改人"></el-table-column>
@@ -321,7 +329,14 @@ export default {
         this.dataList = res.data || []
         this.total = res.count || 0
         this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
+    },
+    // 重置table查询
+    resetTable() {
+      this.resetForm('queryForm')
+      this.getDataList()
     },
     // 打开新增模版窗口
     openAdd() {
